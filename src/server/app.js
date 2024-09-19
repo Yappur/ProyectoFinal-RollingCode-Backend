@@ -1,32 +1,5 @@
 const express = require("express"); /* conmojs */
-
 const path = require("path");
-
-const productos = [
-  {
-    id: 1,
-    nombre: "Funcional",
-    precio: 10000,
-  },
-
-  {
-    id: 2,
-    nombre: "Spining",
-    precio: 12000,
-  },
-
-  {
-    id: 3,
-    nombre: "Aparatos",
-    precio: 15000,
-  },
-
-  {
-    id: 4,
-    nombre: "Allinclusive",
-    precio: 30000,
-  },
-];
 
 class Server {
   constructor() {
@@ -43,6 +16,7 @@ class Server {
 
   rutas() {
     this.app.use("/productos", require("../routes/productos.routes"));
+    this.app.use("/usuarios", require("../routes/usuarios.routes"));
   }
 
   listen() {
