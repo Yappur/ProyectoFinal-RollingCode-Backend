@@ -1,6 +1,6 @@
 const serviciosUsuarios = require("../services/usuarios.services");
 
-const obtenerTodosLosUsuarios = () => {
+const obtenerTodosLosUsuarios = (req, res) => {
   const result = serviciosUsuarios.obtenerUnUsuarios();
 
   if (result.statusCode === 200) {
@@ -10,7 +10,7 @@ const obtenerTodosLosUsuarios = () => {
   }
 };
 
-const obtenerUnUsuario = () => {
+const obtenerUnUsuario = (req, res) => {
   const result = serviciosUsuarios.obtenerUnUsuarios(req.params.idUsuario);
 
   if (result.statusCode === 200) {
@@ -20,7 +20,7 @@ const obtenerUnUsuario = () => {
   }
 };
 
-const crearUsuario = () => {
+const crearUsuario = (req, res) => {
   const result = serviciosUsuarios.nuevoUsuario(req.body);
 
   if (result.statusCode === 201) {
@@ -30,7 +30,7 @@ const crearUsuario = () => {
   }
 };
 
-const actualizarUnUsuario = () => {
+const actualizarUnUsuario = (req, res) => {
   const result = serviciosUsuarios.actualizarUsuario(
     req.params.idUsuario,
     req.body
@@ -43,7 +43,7 @@ const actualizarUnUsuario = () => {
   }
 };
 
-const borradoFisicoUsuario = () => {
+const borradoFisicoUsuario = (req, res) => {
   const result = serviciosUsuarios.borrarUsuario(req.params.idUsuario);
 
   if (result.statusCode === 200) {

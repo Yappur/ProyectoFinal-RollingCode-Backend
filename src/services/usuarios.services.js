@@ -2,19 +2,19 @@ const usuarios = [
   {
     id: 1,
     nombreUsuario: "Dalmiro20",
-    contrasenia: dal2020,
+    contrasenia: 2020,
   },
 
   {
     id: 2,
     nombreUsuario: "Gerardo18",
-    contrasenia: ger1818,
+    contrasenia: 1818,
   },
 
   {
     id: 3,
     nombreUsuario: "Matteo24",
-    contrasenia: matt2024,
+    contrasenia: 2024,
   },
 ];
 

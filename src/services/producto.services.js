@@ -1,4 +1,4 @@
-const productos = [
+/*const productos = [
   {
     id: 1,
     nombre: "Funcional",
@@ -22,7 +22,8 @@ const productos = [
     nombre: "Allinclusive",
     precio: 30000,
   },
-];
+]; */
+const ProductModel = require("../models/producto.schema");
 
 const obtenerProductos = () => {
   return {
@@ -39,14 +40,15 @@ const obtenerProducto = (idProducto) => {
   };
 };
 
-const nuevoProducto = (body) => {
-  const nuevoProducto = {
+const nuevoProducto = async (body) => {
+  const nuevoProducto = new ProductModel(body);
+  console.log(nuevoProducto);
+  /*const nuevoProducto = {
     id: productos[productos.length - 1]?.id + 1 || 1,
     ...body,
   };
-
   productos.push(nuevoProducto);
-
+  */
   return {
     msg: "Producto creado con exito",
     statusCode: 201,

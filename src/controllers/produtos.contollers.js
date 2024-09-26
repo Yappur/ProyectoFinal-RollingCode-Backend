@@ -19,8 +19,8 @@ const obtenerUnProducto = (req, res) => {
   }
 };
 
-const crearUnProducto = (req, res) => {
-  const result = serviciosProductos.nuevoProducto(req.body);
+const crearUnProducto = async (req, res) => {
+  const result = await serviciosProductos.nuevoProducto(req.body);
 
   if (result.statusCode === 201) {
     res.status(201).json({ msg: result.msg });
