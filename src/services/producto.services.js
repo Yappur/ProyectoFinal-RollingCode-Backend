@@ -25,15 +25,16 @@
 ]; */
 const ProductModel = require("../models/producto.schema");
 
-const obtenerProductos = () => {
+const obtenerProductos = async () => {
+  const productos = await ProductModel.find();
   return {
     productos,
     statusCode: 200,
   };
 };
 
-const obtenerProducto = (idProducto) => {
-  const producto = productos.find((prod) => prod.id === Number(idProducto));
+const obtenerProducto = async (idProducto) => {
+  const producto = await ProductModel.findOne({ _id: idProducto });
   return {
     producto,
     statusCode: 200,
@@ -43,27 +44,21 @@ const obtenerProducto = (idProducto) => {
 const nuevoProducto = async (body) => {
   const nuevoProducto = new ProductModel(body);
   console.log(nuevoProducto);
-  /*const nuevoProducto = {
-    id: productos[productos.length - 1]?.id + 1 || 1,
-    ...body,
-  };
-  productos.push(nuevoProducto);
-  */
+
   return {
     msg: "Producto creado con exito",
     statusCode: 201,
   };
 };
 
-const ActualizarProducto = (body, idProducto) => {
-  const posicionProducto = productos.findIndex((prod) => prod.id == Number(id));
-
-  const productoActualizado = {
-    id: Number(idProducto),
-    ...body,
-  };
-
-  productos[posicionProducto] = productoActualizado;
+const ActualizarProducto = async (body, idProducto) => {
+  const productoActualizado = await ProductModel.findByIdAndUpdate(
+    { _id: idProducto },
+    body
+  );
+  console.log(
+    productoActualizado
+  ); /*Pasar al Frontend la respuesta de producto actualizado */
 
   return {
     msg: "Producto actualizado",
@@ -71,12 +66,8 @@ const ActualizarProducto = (body, idProducto) => {
   };
 };
 
-const borrarProducto = (idProducto) => {
-  const posicionProducto = productos.findIndex(
-    (prod) => prod.id == Number(idProducto)
-  );
-
-  productos.splice(posicionProducto, 1);
+const borrarProducto = async (idProducto) => {
+  ProductModel.findByIdAndDelete({ _id: idProducto });
 
   return {
     msg: "Producto eliminado",

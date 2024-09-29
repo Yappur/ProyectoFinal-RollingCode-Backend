@@ -1,7 +1,7 @@
 const serviciosUsuarios = require("../services/usuarios.services");
 
-const obtenerTodosLosUsuarios = (req, res) => {
-  const result = serviciosUsuarios.obtenerUnUsuarios();
+const obtenerTodosLosUsuarios = async (req, res) => {
+  const result = await serviciosUsuarios.obtenerUnUsuarios();
 
   if (result.statusCode === 200) {
     res.status(200).json(result.usuarios);
@@ -10,8 +10,10 @@ const obtenerTodosLosUsuarios = (req, res) => {
   }
 };
 
-const obtenerUnUsuario = (req, res) => {
-  const result = serviciosUsuarios.obtenerUnUsuarios(req.params.idUsuario);
+const obtenerUnUsuario = async (req, res) => {
+  const result = await serviciosUsuarios.obtenerUnUsuarios(
+    req.params.idUsuario
+  );
 
   if (result.statusCode === 200) {
     res.status(200).json(result.usuario);
@@ -20,8 +22,8 @@ const obtenerUnUsuario = (req, res) => {
   }
 };
 
-const crearUsuario = (req, res) => {
-  const result = serviciosUsuarios.nuevoUsuario(req.body);
+const crearUsuario = async (req, res) => {
+  const result = await serviciosUsuarios.nuevoUsuario(req.body);
 
   if (result.statusCode === 201) {
     res.status(200).json({ msg: result.msg });
@@ -30,8 +32,8 @@ const crearUsuario = (req, res) => {
   }
 };
 
-const actualizarUnUsuario = (req, res) => {
-  const result = serviciosUsuarios.actualizarUsuario(
+const actualizarUnUsuario = async (req, res) => {
+  const result = await serviciosUsuarios.actualizarUsuario(
     req.params.idUsuario,
     req.body
   );
@@ -43,8 +45,8 @@ const actualizarUnUsuario = (req, res) => {
   }
 };
 
-const borradoFisicoUsuario = (req, res) => {
-  const result = serviciosUsuarios.borrarUsuario(req.params.idUsuario);
+const borradoFisicoUsuario = async (req, res) => {
+  const result = await serviciosUsuarios.borrarUsuario(req.params.idUsuario);
 
   if (result.statusCode === 200) {
     res.status(200).json({ msg: result.msg });

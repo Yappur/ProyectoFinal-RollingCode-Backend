@@ -1,4 +1,4 @@
-const usuarios = [
+/*const usuarios = [
   {
     id: 1,
     nombreUsuario: "Dalmiro20",
@@ -16,60 +16,45 @@ const usuarios = [
     nombreUsuario: "Matteo24",
     contrasenia: 2024,
   },
-];
+];*/
 
-const obtenerUsuarios = () => {
+const UsersModel = require("../models/usuarios.schema");
+
+const obtenerUsuarios = async () => {
+  const usuario = await UsersModel.find();
   return {
     usuarios,
     statusCode: 200,
   };
 };
 
-const obtenerUsuario = (idUsuario) => {
-  const usuario = usuarios.find((user) => user.id === Number(idUsuario));
+const obtenerUsuario = async (idUsuario) => {
+  const usuario = await UsersModel.findOne({ _id: idUsuario });
   return {
     usuario,
     statusCode: 200,
   };
 };
 
-const nuevoUsuario = (body) => {
-  const usuario = {
-    id: usuarios[usuarios.length - 1]?.id + 1 || 1,
-    ...body,
-  };
-
-  usuarios.push(usuario);
-
+const nuevoUsuario = async (body) => {
+  const usuario = new UsersModel(body);
+  await usuario.save();
   return {
     msg: "Usuario creado con exito",
     statusCode: 201,
   };
 };
 
-const actualizarUsuario = (idUsuario, body) => {
-  const posicionUsuario = usuarios.findIndex((user) => user.id == Number(id));
-
-  const usuarioActualizado = {
-    id: Number(idUsuario),
-    ...body,
-  };
-
-  usuarios[posicionUsuario] = usuarioActualizado;
-
+const actualizarUsuario = async (idUsuario, body) => {
+  await UsersModel.findByIdAndUpdate({ _id: idUsuario }, body);
   return {
     msg: "Usuario actualizado",
     statusCode: 200,
   };
 };
 
-const borrarUsuario = (idUsuario) => {
-  const posicionUsuario = usuarios.findIndex(
-    (user) => user.id == Number(idUsuario)
-  );
-
-  usuarios.splice(posicionUsuario, 1);
-
+const borrarUsuario = async (idUsuario) => {
+  await UsersModel.findOneAndDelete({ _id: idUsuario });
   return {
     msg: "Usuario eliminado",
     statusCode: 200,

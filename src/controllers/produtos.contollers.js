@@ -1,7 +1,8 @@
 const serviciosProductos = require("../services/producto.services");
 
-const obtenerTodosLosProductos = (req, res) => {
-  const result = serviciosProductos.obtenerProductos();
+const obtenerTodosLosProductos = async (req, res) => {
+  const result = await serviciosProductos.obtenerProductos();
+
   if (result.statusCode === 200) {
     res.status(200).json(result.productos);
   } else {
@@ -9,9 +10,11 @@ const obtenerTodosLosProductos = (req, res) => {
   }
 };
 
-const obtenerUnProducto = (req, res) => {
+const obtenerUnProducto = async (req, res) => {
   /*req: Request -> header - body - params - query */
-  const result = serviciosProductos.obtenerProducto(req.params.idProducto);
+  const result = await serviciosProductos.obtenerProducto(
+    req.params.idProducto
+  );
   if (result.statusCode === 200) {
     res.status(200).json(result.productos);
   } else {
@@ -29,8 +32,8 @@ const crearUnProducto = async (req, res) => {
   }
 };
 
-const actualizarUnProducto = (req, res) => {
-  const result = serviciosProductos.actualizarProducto(
+const actualizarUnProducto = async (req, res) => {
+  const result = await serviciosProductos.actualizarProducto(
     req.body,
     req.params.idProducto
   );
@@ -41,8 +44,8 @@ const actualizarUnProducto = (req, res) => {
   }
 };
 
-const borradoFisicodelProducto = (req, res) => {
-  const result = serviciosProductos.borrarProducto(req.params.idProducto);
+const borradoFisicodelProducto = async (req, res) => {
+  const result = await serviciosProductos.borrarProducto(req.params.idProducto);
 
   if (result.statusCode === 200) {
     res.status(200).json({ msg: result.msg });
