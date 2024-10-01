@@ -59,16 +59,33 @@ const productoPost = async (req = request, res = response) => {
   });
 };
 
-const actualizarUnProducto = async (req, res) => {
-  const result = await serviciosProductos.actualizarProducto(
-    req.body,
-    req.params.idProducto
-  );
-  if (result.statusCode === 200) {
-    res.status(200).json({ msg: result.msg });
-  } else {
-    res.status(500).json({ msg: "Error al traer los productos" });
+const actualizarProducto = async (req = request, res = response) => {
+  const { id } = req.params;
+  const { nombre, precio, categoria, descripcion, disponible, estado } =
+    req.body;
+
+  let data = {
+    nombre,
+    precio,
+    descripcion,
+    categoria,
+    disponible,
+    estado,
+  };
+
+  if (req.body.nombre) {
+    data.nombre = req.body.nombre;
   }
+
+  if (req.body.stock) {
+    data.stock = req.body.stock;
+  }
+  if (req.body.img) {
+    data.img = req.body.img;
+  }
+
+  const producto = await Producto.findByIdAndUpdate(id, data, { new: true });
+  res.status(200).json(producto);
 };
 
 const borradoFisicodelProducto = async (req, res) => {
@@ -85,6 +102,6 @@ module.exports = {
   obtenerProductos,
   obtenerProducto,
   productoPost,
-  actualizarUnProducto,
+  actualizarProducto,
   borradoFisicodelProducto,
 };

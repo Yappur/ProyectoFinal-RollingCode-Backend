@@ -8,10 +8,10 @@ const {
 } = require("../controllers/usuarios.controllers");
 const router = Router();
 
-router.get("/", obtenerTodosLosUsuarios);
+router.get("/listaUsuarios", obtenerTodosLosUsuarios);
 router.get("/:idUsuario", obtenerUnUsuario);
 
-router.post("/", crearUsuario);
+router.post("/crearUsuario", crearUsuario);
 router.put("/:idUsuario", actualizarUnUsuario);
 
 router.delete("/:idUsuario", borradoFisicoUsuario);

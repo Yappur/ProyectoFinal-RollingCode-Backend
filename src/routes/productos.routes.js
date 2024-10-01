@@ -5,7 +5,7 @@ const {
   obtenerProductos,
   obtenerProducto,
   productoPost,
-  actualizarUnProducto,
+  actualizarProducto,
   borrarUnProducto,
   borradoFisicodelProducto,
 } = require("../controllers/produtos.contollers");
@@ -20,7 +20,7 @@ router.get("/:idProducto", obtenerProducto);
 /*POST - Crear un producto*/
 router.post("/crearProducto", productoPost);
 /*PUT - Actualizar un Producto */
-router.put("/:idProducto", actualizarUnProducto);
+router.put("/:idProducto", actualizarProducto);
 /*DELETE - Borrado Fisico de un Producto*/
 router.delete("/idProducto", borradoFisicodelProducto);
 
