@@ -1,4 +1,3 @@
-const serviciosUsuarios = require("../services/usuarios.services");
 const { request, response } = require("express");
 const Usuario = require("../models/usuarios.schema");
 const bcrypt = require("bcryptjs");
@@ -27,10 +26,10 @@ const obtenerUnUsuario = async (req, res) => {
 
 const crearUsuario = async (req = request, res = response) => {
   const { idUsuario } = req.params;
-  const { nombreUsuario, emailUsuario, contrasenia, role } = req.body;
+  const { nombreUsuario, emailUsuario, contrasenia } = req.body;
 
   const existeEmail = await Usuario.findOne({
-    email,
+    emailUsuario,
     _id: { $ne: idUsuario },
   });
   if (existeEmail) {
@@ -40,7 +39,6 @@ const crearUsuario = async (req = request, res = response) => {
   }
 
   const usuarioActual = await Usuario.findById(idUsuario);
-
   if (contrasenia && contrasenia.length < 8) {
     return res.status(400).json({
       msg: "La contraseña debe tener al menos 8 caracteres",
@@ -48,10 +46,10 @@ const crearUsuario = async (req = request, res = response) => {
   }
 };
 
-const salt = bcrypt.genSaltSync();
-const hashedPassword = contrasenia
-  ? bcrypt.hashSync(contrasenia, salt)
-  : usuarioActual.contrasenia;
+// const salt = bcrypt.genSaltSync();
+// const hashedPassword = contrasenia
+//   ? bcrypt.hashSync(contrasenia, salt)
+//   : usuarioActual.contrasenia;
 
 const actualizarUnUsuario = async (req, res) => {
   const result = await serviciosUsuarios.actualizarUsuario(

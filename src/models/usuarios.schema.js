@@ -29,11 +29,10 @@ const UsersSchema = new Schema({
   },
 });
 
-UsersSchema.methods.toJSON = function () {
-  const { __v, password, _id, ...usuario } = this.toObject();
-  usuario.uid = _id;
-  return usuario;
-};
+// UsersSchema.methods.toJSON = function () {
+//   const { __v, password, _id, ...usuario } = this.toObject();
+//   usuario.uid = _id;
+//   return usuario;
+// };
 
-const UsersModel = model("user", UsersSchema);
-module.exports = UsersModel;
+module.exports = model("Usuario", UsersSchema);

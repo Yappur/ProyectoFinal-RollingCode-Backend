@@ -36,7 +36,7 @@ const obtenerUsuario = async (idUsuario) => {
   };
 };
 
-const nuevoUsuario = async (body) => {
+const crearUsuario = async (body) => {
   const usuario = new UsersModel(body);
   await usuario.save();
   return {

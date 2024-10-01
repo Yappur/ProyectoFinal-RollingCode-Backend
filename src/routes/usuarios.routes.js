@@ -1,4 +1,6 @@
-const { Router } = require("express");
+const express = require("express");
+const router = express.Router();
+
 const {
   crearUsuario,
   obtenerTodosLosUsuarios,
@@ -6,7 +8,6 @@ const {
   actualizarUnUsuario,
   borradoFisicoUsuario,
 } = require("../controllers/usuarios.controllers");
-const router = Router();
 
 router.get("/listaUsuarios", obtenerTodosLosUsuarios);
 router.get("/:idUsuario", obtenerUnUsuario);
