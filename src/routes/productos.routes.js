@@ -2,9 +2,9 @@ const express = require("express");
 const router = express.Router();
 
 const {
-  obtenerTodosLosProductos,
-  obtenerUnProducto,
-  crearUnProducto,
+  obtenerProductos,
+  obtenerProducto,
+  productoPost,
   actualizarUnProducto,
   borrarUnProducto,
   borradoFisicodelProducto,
@@ -14,11 +14,11 @@ const {
 /*Response: esto es la respuesta del servidor (back) al cliente (front)*/
 
 /*GET - R - Read - Solo Obtener - Todos los productos*/
-router.get("/", obtenerTodosLosProductos);
+router.get("/listaProductos", obtenerProductos);
 /*GET - Un Producto*/
-router.get("/:idProducto", obtenerUnProducto);
+router.get("/:idProducto", obtenerProducto);
 /*POST - Crear un producto*/
-router.post("/", crearUnProducto);
+router.post("/crearProducto", productoPost);
 /*PUT - Actualizar un Producto */
 router.put("/:idProducto", actualizarUnProducto);
 /*DELETE - Borrado Fisico de un Producto*/

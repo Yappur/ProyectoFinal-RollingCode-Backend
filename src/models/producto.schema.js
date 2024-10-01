@@ -1,26 +1,36 @@
-const mongoose = require("mongoose");
-
-const ProductSchema = new mongoose.Schema({
-  titulo: {
+const { Schema, model } = require("mongoose");
+const ProductoSchema = Schema({
+  nombre: {
     type: String,
-    require: true,
-    trim: true,
+    required: [true, "El nombre es obligatorio"],
+    unique: true,
+  },
+  estado: {
+    type: Boolean,
+    default: true,
+  },
+  categoria: {
+    type: String,
+    default: "CrossFit",
   },
   precio: {
-    type: String,
-    require: true,
+    type: Number,
+    default: 0,
   },
   descripcion: {
     type: String,
-    require: true,
-    trim: true,
   },
-  imagen: {
+  disponible: {
+    type: Boolean,
+    default: true,
+  },
+  img: {
     type: String,
-    default: "" /*Imagen opcional*/,
-    trim: true,
+  },
+  stock: {
+    type: Number,
+    default: 0,
   },
 });
 
-const ProductModel = mongoose.model("product", ProductSchema);
-module.exports = ProductModel;
+module.exports = model("Producto", ProductoSchema);

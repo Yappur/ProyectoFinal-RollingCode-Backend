@@ -41,8 +41,8 @@ const obtenerProducto = async (idProducto) => {
   };
 };
 
-const nuevoProducto = async (body) => {
-  const nuevoProducto = new ProductModel(body);
+const nuevoProducto = async (req, body) => {
+  const nuevoProducto = await new ProductModel(body);
   console.log(nuevoProducto);
 
   return {
