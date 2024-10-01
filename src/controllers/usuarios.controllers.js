@@ -1,4 +1,7 @@
 const serviciosUsuarios = require("../services/usuarios.services");
+const { request, response } = require("express");
+const Usuario = require("../models/usuarios.schema");
+const bcrypt = require("bcryptjs");
 
 const obtenerTodosLosUsuarios = async (req, res) => {
   const result = await serviciosUsuarios.obtenerUnUsuarios();
@@ -22,15 +25,33 @@ const obtenerUnUsuario = async (req, res) => {
   }
 };
 
-const crearUsuario = async (req, res) => {
-  const result = await serviciosUsuarios.nuevoUsuario(req.body);
+const crearUsuario = async (req = request, res = response) => {
+  const { idProducto } = req.params;
+  const { nombreUsuario, emailUsuario, contrasenia, role } = req.body;
 
-  if (result.statusCode === 201) {
-    res.status(200).json({ msg: result.msg });
-  } else {
-    res.status(500).json({ msg: "Error al crear el usuario" });
+  const existeEmail = await Usuario.findOne({
+    email,
+    _id: { $ne: idProducto },
+  });
+  if (existeEmail) {
+    return res.status(400).json({
+      msg: `El correo ${emailUsuario} ya está registrado para otro usuario`,
+    });
+  }
+
+  const usuarioActual = await Usuario.findById(idProducto);
+
+  if (contrasenia && contrasenia.length < 8) {
+    return res.status(400).json({
+      msg: "La contraseña debe tener al menos 8 caracteres",
+    });
   }
 };
+
+const salt = bcrypt.genSaltSync();
+const hashedPassword = contrasenia
+  ? bcrypt.hashSync(contrasenia, salt)
+  : usuarioActual.contrasenia;
 
 const actualizarUnUsuario = async (req, res) => {
   const result = await serviciosUsuarios.actualizarUsuario(
