@@ -1,17 +1,20 @@
 const { request, response } = require("express");
 const Usuario = require("../models/usuarios.schema");
-const bcrypt = require("bcryptjs");
 
-const obtenerTodosLosUsuarios = async (req, res) => {
-  const result = await serviciosUsuarios.obtenerUnUsuarios();
+const obtenerTodosLosUsuarios = async (req = request, res = response) => {
+  const { limite = 5, desde = 0 } = req.query;
+  const query = { role: { $in: ["user", "admin"] }, bloqueado: false };
 
-  if (result.statusCode === 200) {
-    res.status(200).json(result.usuarios);
-  } else {
-    res.status(500).json({ msg: "Error al traer los usuarios" });
-  }
+  const [total, usuarios] = await Promise.all([
+    Usuario.countDocuments(query),
+    Usuario.find(query).sort({ nombre: 1 }).limit(limite).skip(desde),
+  ]);
+
+  res.status(200).json({
+    total,
+    usuarios,
+  });
 };
-
 const obtenerUnUsuario = async (req, res) => {
   const result = await serviciosUsuarios.obtenerUnUsuarios(
     req.params.idUsuario
@@ -25,32 +28,40 @@ const obtenerUnUsuario = async (req, res) => {
 };
 
 const crearUsuario = async (req = request, res = response) => {
-  const { idUsuario } = req.params;
-  const { nombreUsuario, emailUsuario, contrasenia } = req.body;
+  const { nombreUsuario, emailUsuario, contrasenia, role } = req.body;
 
-  const existeEmail = await Usuario.findOne({
-    emailUsuario,
-    _id: { $ne: idUsuario },
-  });
-  if (existeEmail) {
-    return res.status(400).json({
-      msg: `El correo ${emailUsuario} ya está registrado para otro usuario`,
+  try {
+    // Crear un nuevo usuario con los datos proporcionados
+    const usuario = new Usuario({
+      nombreUsuario,
+      emailUsuario,
+      contrasenia,
+      role,
     });
-  }
 
-  const usuarioActual = await Usuario.findById(idUsuario);
-  if (contrasenia && contrasenia.length < 8) {
-    return res.status(400).json({
-      msg: "La contraseña debe tener al menos 8 caracteres",
+    // Verificar si el correo ya existe
+    const existeEmail = await Usuario.findOne({ emailUsuario });
+    if (existeEmail) {
+      return res.status(400).json({
+        msg: `El correo ${emailUsuario} ya está registrado`,
+      });
+    }
+
+    // Guardar el usuario en la base de datos
+    await usuario.save();
+
+    res.status(201).json({
+      message: "Usuario creado",
+      usuario,
+    });
+  } catch (error) {
+    console.error("Error al crear el usuario:", error);
+    return res.status(500).json({
+      msg: "Error interno del servidor",
+      error: error.message, // Muestra el mensaje de error para diagnosticar mejor
     });
   }
 };
-
-// const salt = bcrypt.genSaltSync();
-// const hashedPassword = contrasenia
-//   ? bcrypt.hashSync(contrasenia, salt)
-//   : usuarioActual.contrasenia;
-
 const actualizarUnUsuario = async (req, res) => {
   const result = await serviciosUsuarios.actualizarUsuario(
     req.params.idUsuario,
