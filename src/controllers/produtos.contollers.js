@@ -1,16 +1,12 @@
-const serviciosProductos = require("../services/producto.services");
 const { response, request } = require("express");
 const Producto = require("../models/producto.schema");
 
 const obtenerProductos = async (req = request, res = response) => {
-  const { limite = 5, desde = 0 } = req.query;
+  const { _id } = req.query;
   try {
     const [total, productos] = await Promise.all([
       Producto.countDocuments(),
-      Producto.find()
-        .sort({ nombre: 1 })
-        .skip(Number(desde))
-        .limit(Number(limite)),
+      Producto.find(_id).sort({ nombre: 1 }),
     ]);
     res.json({
       total,
@@ -25,14 +21,14 @@ const obtenerProductos = async (req = request, res = response) => {
 };
 
 const obtenerProducto = async (req = request, res = response) => {
-  const { id } = req.params;
-  const producto = await Producto.findById(id);
+  const { idProducto } = req.params;
+  const producto = await Producto.findById(idProducto);
   res.json({
     producto,
   });
 };
 
-const productoPost = async (req = request, res = response) => {
+const crearProducto = async (req = request, res = response) => {
   const { nombre, precio, categoria, descripcion, img, stock } = req.body;
 
   const productoDB = await Producto.findOne({ nombre });
@@ -60,7 +56,7 @@ const productoPost = async (req = request, res = response) => {
 };
 
 const actualizarProducto = async (req = request, res = response) => {
-  const { id } = req.params;
+  const { idProducto } = req.params;
   const { nombre, precio, categoria, descripcion, disponible, estado } =
     req.body;
 
@@ -84,24 +80,41 @@ const actualizarProducto = async (req = request, res = response) => {
     data.img = req.body.img;
   }
 
-  const producto = await Producto.findByIdAndUpdate(id, data, { new: true });
+  const producto = await Producto.findByIdAndUpdate(idProducto, data, {
+    new: true,
+  });
   res.status(200).json(producto);
 };
 
-const borradoFisicodelProducto = async (req, res) => {
-  const result = await serviciosProductos.borrarProducto(req.params.idProducto);
+const borradoFisicodelProducto = async (req = request, res = response) => {
+  const { idProducto } = req.params;
 
-  if (result.statusCode === 200) {
-    res.status(200).json({ msg: result.msg });
-  } else {
-    res.status(500).json({ msg: "Error al traer los productos" });
+  try {
+    const productoBorrado = await Producto.findOneAndDelete({
+      _id: idProducto,
+    });
+
+    if (!productoBorrado) {
+      return res.status(404).json({
+        mensaje: "Producto no encontrado",
+      });
+    }
+
+    res.json({
+      mensaje: "Producto eliminado",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      mensaje: "Error al intentar borrar el producto",
+    });
   }
 };
 
 module.exports = {
   obtenerProductos,
   obtenerProducto,
-  productoPost,
+  crearProducto,
   actualizarProducto,
   borradoFisicodelProducto,
 };

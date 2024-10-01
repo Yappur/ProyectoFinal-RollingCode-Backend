@@ -4,7 +4,7 @@ const router = express.Router();
 const {
   obtenerProductos,
   obtenerProducto,
-  productoPost,
+  crearProducto,
   actualizarProducto,
   borrarUnProducto,
   borradoFisicodelProducto,
@@ -18,10 +18,10 @@ router.get("/listaProductos", obtenerProductos);
 /*GET - Un Producto*/
 router.get("/:idProducto", obtenerProducto);
 /*POST - Crear un producto*/
-router.post("/crearProducto", productoPost);
+router.post("/crearProducto", crearProducto);
 /*PUT - Actualizar un Producto */
 router.put("/:idProducto", actualizarProducto);
 /*DELETE - Borrado Fisico de un Producto*/
-router.delete("/idProducto", borradoFisicodelProducto);
+router.delete("/:idProducto", borradoFisicodelProducto);
 
 module.exports = router;
