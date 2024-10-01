@@ -26,12 +26,12 @@ const obtenerUnUsuario = async (req, res) => {
 };
 
 const crearUsuario = async (req = request, res = response) => {
-  const { idProducto } = req.params;
+  const { idUsuario } = req.params;
   const { nombreUsuario, emailUsuario, contrasenia, role } = req.body;
 
   const existeEmail = await Usuario.findOne({
     email,
-    _id: { $ne: idProducto },
+    _id: { $ne: idUsuario },
   });
   if (existeEmail) {
     return res.status(400).json({
@@ -39,7 +39,7 @@ const crearUsuario = async (req = request, res = response) => {
     });
   }
 
-  const usuarioActual = await Usuario.findById(idProducto);
+  const usuarioActual = await Usuario.findById(idUsuario);
 
   if (contrasenia && contrasenia.length < 8) {
     return res.status(400).json({
