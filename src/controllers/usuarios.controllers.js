@@ -55,6 +55,12 @@ const crearUsuario = async (req = request, res = response) => {
       role,
     });
 
+    if (!contrasenia || contrasenia.length < 8) {
+      return res.status(400).json({
+        msg: "La contraseña debe tener al menos 8 caracteres",
+      });
+    }
+
     // Verificar si el correo ya existe
     const existeEmail = await Usuario.findOne({ emailUsuario });
     if (existeEmail) {
