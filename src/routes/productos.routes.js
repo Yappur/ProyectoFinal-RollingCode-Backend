@@ -1,22 +1,27 @@
 const express = require("express");
 const router = express.Router();
 
-router.get("/productos", (req, res) => {
-  res.json(productos);
-});
-router.get("/:idProducto", (req, res) => {
-  const nuevoProducto = {
-    id: productos[productos.length - 1]?.id + 1 || 1,
-    ...req.body,
-  };
-  productos.push(nuevoProducto);
-  res.json(nuevoProducto);
-});
-router.post("/", (req, res) => {
-  res.json(productos);
-});
+const {
+  obtenerProductos,
+  obtenerProducto,
+  crearProducto,
+  actualizarProducto,
+  borrarUnProducto,
+  borradoFisicodelProducto,
+} = require("../controllers/produtos.contollers");
+
+/*Request - esto es la solicitud que me manda el cliente (front) al server (back)*/
+/*Response: esto es la respuesta del servidor (back) al cliente (front)*/
+
+/*GET - R - Read - Solo Obtener - Todos los productos*/
+router.get("/listaProductos", obtenerProductos);
+/*GET - Un Producto*/
+router.get("/:idProducto", obtenerProducto);
+/*POST - Crear un producto*/
+router.post("/crearProducto", crearProducto);
+/*PUT - Actualizar un Producto */
+router.put("/:idProducto", actualizarProducto);
+/*DELETE - Borrado Fisico de un Producto*/
+router.delete("/:idProducto", borradoFisicodelProducto);
 
 module.exports = router;
-
-/*Agregar Delete y put 41min*/
-/*quedamos en el min 45 con gerardo*/
