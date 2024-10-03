@@ -1,4 +1,8 @@
 {
   "version": 2,
-  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
+  "rewrites": [
+    { "source": "/usuarios", "destination": "../routes/usuarios.routes" },
+    { "source": "/productos", "destination": "../routes/productos.routes" },
+    { "source": "/(.*)", "destination": "/" }
+  ]
 }
