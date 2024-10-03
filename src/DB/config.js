@@ -1,7 +1,8 @@
+require("dotenv").config();
+
 const mongoose = require("mongoose");
+
 mongoose
-  .connect(
-    "mongodb+srv://rojasluis18:qm2wRpAwJ2sxrC6u@cluster0.os14o.mongodb.net/DB_ProyectoFinal"
-  )
+  .connect(process.env.MONGODB_URI)
   .then(() => console.log("Base de datos conectada"))
-  .catch((error) => console.log(errror));
+  .catch((error) => console.log(error));
