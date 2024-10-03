@@ -80,7 +80,7 @@ const crearUsuario = async (req = request, res = response) => {
 };
 
 // actualizar un usuario
-const actualizarUnUsuario = async (req, res) => {
+const actualizarUnUsuario = async (req = request, res = response) => {
   const { idUsuario } = req.params;
   const { nombreUsuario, emailUsuario, contrasenia, role } = req.body;
 
@@ -137,13 +137,28 @@ const actualizarUnUsuario = async (req, res) => {
 };
 
 // borrar un usuario
-const borradoFisicoUsuario = async (req, res) => {
-  const result = await serviciosUsuarios.borrarUsuario(req.params.idUsuario);
+const borradoFisicoUsuario = async (req = request, res = response) => {
+  const { idUsuario } = req.params;
 
-  if (result.statusCode === 200) {
-    res.status(200).json({ msg: result.msg });
-  } else {
-    res.status(500).json({ msg: "Error al borrar al usuarios" });
+  try {
+    const usuarioBorrado = await Usuario.findOneAndDelete({
+      _id: idUsuario,
+    });
+
+    if (!usuarioBorrado) {
+      return res.status(404).json({
+        mensaje: "Usuario no encontrado",
+      });
+    }
+
+    res.json({
+      mensaje: "Usuario eliminado",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      mensaje: "Error al intentar borrar el Usuario",
+    });
   }
 };
 
