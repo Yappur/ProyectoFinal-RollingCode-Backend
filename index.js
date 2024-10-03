@@ -1,3 +1,3 @@
-const Server = require("./server/app");
+const Server = require("./src/server/app");
 const server = new Server();
 server.listen();
