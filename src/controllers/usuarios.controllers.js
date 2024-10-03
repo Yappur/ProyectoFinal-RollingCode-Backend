@@ -84,45 +84,58 @@ const actualizarUnUsuario = async (req, res) => {
   const { idUsuario } = req.params;
   const { nombreUsuario, emailUsuario, contrasenia, role } = req.body;
 
-  const existeEmail = await Usuario.findOne({
-    emailUsuario,
-    _id: { $ne: idUsuario },
-  });
-  if (existeEmail) {
-    return res.status(400).json({
-      msg: `El correo ${email} ya está registrado para otro usuario`,
+  try {
+    // Verificar si el correo ya está registrado en otro usuario
+    const existeEmail = await Usuario.findOne({
+      emailUsuario,
+      _id: { $ne: idUsuario },
+    });
+
+    if (existeEmail) {
+      return res.status(400).json({
+        msg: `El correo ${emailUsuario} ya está registrado para otro usuario`,
+      });
+    }
+
+    // Obtener el usuario actual para mantener los datos que no se van a actualizar
+    const usuarioActual = await Usuario.findById(idUsuario);
+    if (!usuarioActual) {
+      return res.status(404).json({ msg: "Usuario no encontrado" });
+    }
+
+    // Validar la longitud de la contraseña si se actualiza
+    if (contrasenia && contrasenia.length < 8) {
+      return res.status(400).json({
+        msg: "La contraseña debe tener al menos 8 caracteres",
+      });
+    }
+
+    // Preparar los datos para la actualización
+    let data = {
+      nombreUsuario: nombreUsuario || usuarioActual.nombreUsuario,
+      emailUsuario: emailUsuario || usuarioActual.emailUsuario,
+      contrasenia: contrasenia || usuarioActual.contrasenia,
+      role: role || usuarioActual.role,
+    };
+
+    // Actualizar el usuario
+    const usuario = await Usuario.findByIdAndUpdate(idUsuario, data, {
+      new: true,
+    });
+
+    res.status(200).json({
+      message: "Usuario actualizado",
+      usuario,
+    });
+  } catch (error) {
+    console.error("Error al actualizar el usuario:", error);
+    res.status(500).json({
+      msg: "Error interno del servidor",
+      error: error.message,
     });
   }
-
-  const usuarioActual = await Usuario.findById(id);
-
-  if (password && password.length < 8) {
-    return res.status(400).json({
-      msg: "La contraseña debe tener al menos 8 caracteres",
-    });
-  }
-
-  const salt = bcrypt.genSaltSync();
-  const hashedPassword = password
-    ? bcrypt.hashSync(password, salt)
-    : usuarioActual.password;
-
-  const updatedRole = role || usuarioActual.role;
-
-  let data = {
-    name: name || usuarioActual.name,
-    email,
-    password: hashedPassword,
-    role: updatedRole,
-  };
-
-  const usuario = await Usuario.findByIdAndUpdate(id, data, { new: true });
-
-  res.status(200).json({
-    message: "Usuario actualizado",
-    usuario,
-  });
 };
+
 // borrar un usuario
 const borradoFisicoUsuario = async (req, res) => {
   const result = await serviciosUsuarios.borrarUsuario(req.params.idUsuario);
