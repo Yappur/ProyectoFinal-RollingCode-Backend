@@ -1,5 +1,7 @@
+require("../DB/config");
 const express = require("express"); /* conmojs */
 const path = require("path");
+const cors = require("cors");
 
 class Server {
   constructor() {
@@ -7,6 +9,10 @@ class Server {
     this.port = 3001;
     this.middlewares();
     this.rutas();
+  }
+
+  cors() {
+    this.app.use(cors());
   }
 
   middlewares() {

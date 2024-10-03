@@ -2,10 +2,10 @@ const express = require("express");
 const router = express.Router();
 
 const {
-  obtenerTodosLosProductos,
-  obtenerUnProducto,
-  crearUnProducto,
-  actualizarUnProducto,
+  obtenerProductos,
+  obtenerProducto,
+  crearProducto,
+  actualizarProducto,
   borrarUnProducto,
   borradoFisicodelProducto,
 } = require("../controllers/produtos.contollers");
@@ -14,14 +14,14 @@ const {
 /*Response: esto es la respuesta del servidor (back) al cliente (front)*/
 
 /*GET - R - Read - Solo Obtener - Todos los productos*/
-router.get("/", obtenerTodosLosProductos);
+router.get("/listaProductos", obtenerProductos);
 /*GET - Un Producto*/
-router.get("/:idProducto", obtenerUnProducto);
+router.get("/:idProducto", obtenerProducto);
 /*POST - Crear un producto*/
-router.post("/", crearUnProducto);
+router.post("/crearProducto", crearProducto);
 /*PUT - Actualizar un Producto */
-router.put("/:idProducto", actualizarUnProducto);
+router.put("/:idProducto", actualizarProducto);
 /*DELETE - Borrado Fisico de un Producto*/
-router.delete("/idProducto", borradoFisicodelProducto);
+router.delete("/:idProducto", borradoFisicodelProducto);
 
 module.exports = router;
