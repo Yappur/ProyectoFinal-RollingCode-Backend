@@ -10,12 +10,8 @@ class Server {
     this.middlewares();
     this.rutas();
   }
-
-  cors() {
-    this.app.use(cors());
-  }
-
   middlewares() {
+    this.app.use(cors());
     this.app.use(express.json());
     this.app.use(express.static(path.join(__dirname + "/public")));
   }
