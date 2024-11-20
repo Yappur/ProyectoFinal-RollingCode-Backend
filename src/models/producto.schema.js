@@ -5,31 +5,21 @@ const ProductoSchema = Schema({
     required: [true, "El nombre es obligatorio"],
     unique: true,
   },
-  estado: {
-    type: Boolean,
-    default: true,
+  descripcion: {
+    type: String,
+    required: [true, "La descripción es obligatoria"],
   },
   categoria: {
     type: String,
     default: "CrossFit",
   },
-  precio: {
-    type: Number,
-    default: 0,
-  },
-  descripcion: {
-    type: String,
-  },
+
   disponible: {
     type: Boolean,
     default: true,
   },
   img: {
     type: String,
-  },
-  stock: {
-    type: Number,
-    default: 0,
   },
 });
 
