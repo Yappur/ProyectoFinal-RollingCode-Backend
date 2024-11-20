@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const { request, response } = require("express");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const Usuario = require("../models/usuarios.schema");
 
 const obtenerTodosLosUsuarios = async (req = request, res = response) => {
@@ -168,10 +170,47 @@ const borradoFisicoUsuario = async (req = request, res = response) => {
   }
 };
 
+const inicioDeSesionUsuario = async (data) => {
+  const { nombreUsuario, contrasenia } = data;
+
+  try {
+    const usuario = await Usuario.findOne({ nombreUsuario });
+    if (!usuario) {
+      return { statusCode: 400, msg: "Usuario no encontrado" };
+    }
+
+    // Verificar la contraseña
+    const esValida = await bcrypt.compare(contrasenia, usuario.contrasenia);
+    if (!esValida) {
+      return { statusCode: 400, msg: "Contraseña incorrecta" };
+    }
+
+    // Generar un token JWT
+    const token = jwt.sign(
+      { id: usuario._id, role: usuario.role },
+      "tuClaveSecreta",
+      {
+        expiresIn: "2h", // Define el tiempo de expiración del token
+      }
+    );
+
+    return {
+      statusCode: 200,
+      msg: "Inicio de sesión exitoso",
+      token,
+      role: usuario.role,
+    };
+  } catch (error) {
+    console.error("Error al iniciar sesión:", error);
+    return { statusCode: 500, msg: "Error en el servidor" };
+  }
+};
+
 module.exports = {
   obtenerTodosLosUsuarios,
   obtenerUnUsuario,
   crearUsuario,
   actualizarUnUsuario,
   borradoFisicoUsuario,
+  inicioDeSesionUsuario,
 };
