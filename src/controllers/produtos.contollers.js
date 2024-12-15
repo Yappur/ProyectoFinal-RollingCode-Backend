@@ -41,10 +41,8 @@ const crearProducto = async (req = request, res = response) => {
   const data = {
     nombre,
     categoria,
-    precio,
     descripcion,
     img,
-    stock,
   };
   const producto = new Producto(data);
 
@@ -57,16 +55,13 @@ const crearProducto = async (req = request, res = response) => {
 
 const actualizarProducto = async (req = request, res = response) => {
   const { idProducto } = req.params;
-  const { nombre, precio, categoria, descripcion, disponible, estado } =
-    req.body;
+  const { nombre, categoria, descripcion, disponible } = req.body;
 
   let data = {
     nombre,
-    precio,
     descripcion,
     categoria,
     disponible,
-    estado,
   };
 
   if (req.body.nombre) {
