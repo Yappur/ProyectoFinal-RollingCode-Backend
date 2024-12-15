@@ -5,21 +5,21 @@ const TurnoSchema = new mongoose.Schema(
     usuario: {
       type: mongoose.Schema.Types.ObjectId, // Relacionado con la colección de usuarios
       ref: "Usuario",
-      required: true,
+      required: [true, "El usuario es obligatorio"],
     },
     fecha: {
       type: Date,
-      required: true,
+      required: [true, "La fecha es obligatoria"],
     },
     hora: {
       type: String, // Puedes usar formatos como "HH:mm"
-      required: true,
+      required: [true, "La hora es obligatoria"],
     },
     clase: {
       type: mongoose.Schema.Types.ObjectId, // Relacionado con la colección de clases
-      ref: "Clase",
+      ref: "Producto",
       enum: ["CrossFit", "Pilates", "Funcional"],
-      required: true,
+      required: [true, "La clase es obligatoria"],
     },
   },
   {
