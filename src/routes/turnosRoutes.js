@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const turnosController = require("../controllers/turnosController");
-const verificarToken = require("../middlewares/verificarToken"); // Middleware del token
+const verificarToken = require("../middlewares/auth"); // Middleware del token
 
 // Rutas protegidas
 router.post("/", verificarToken, turnosController.crearTurno);
