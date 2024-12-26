@@ -2,20 +2,17 @@ const Turno = require("../models/turnos.schema");
 const Clase = require("../models/producto.schema");
 const crearTurno = async (req, res) => {
   try {
-    console.log("Request body:", req.body); // Verifica los datos enviados
+    console.log("Creando turno...");
     const usuarioId = req.usuario.id;
-    console.log("Usuario ID:", usuarioId); // Verifica que el ID del usuario esté presente
     const { fecha, hora, clase } = req.body;
 
     if (!fecha || !hora || !clase) {
-      return res
-        .status(400)
-        .json({ mensaje: "Todos los campos son requeridos" });
+      return res.status(400).json({ mensaje: "Faltan campos requeridos" });
     }
 
-    const claseExistente = await Clase.findById(clase);
+    const claseExistente = await Producto.findById(clase);
     if (!claseExistente) {
-      return res.status(404).json({ mensaje: "La clase no existe" });
+      return res.status(404).json({ mensaje: "Clase no encontrada" });
     }
 
     const nuevoTurno = new Turno({
@@ -26,18 +23,15 @@ const crearTurno = async (req, res) => {
     });
 
     await nuevoTurno.save();
-
-    res
-      .status(201)
-      .json({ mensaje: "Turno creado exitosamente", turno: nuevoTurno });
+    console.log("Turno creado:", nuevoTurno);
+    res.status(201).json({ mensaje: "Turno creado", turno: nuevoTurno });
   } catch (error) {
-    console.error("Error al crear el turno:", error.message); // Registra errores
+    console.error(error);
     res
       .status(500)
-      .json({ mensaje: "Error al crear el turno", error: error.message });
+      .json({ mensaje: "Error al crear turno", error: error.message });
   }
 };
-
 const obtenerTurnos = async (req, res) => {
   try {
     const usuarioId = req.usuario.id;

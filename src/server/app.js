@@ -1,7 +1,9 @@
+require("dotenv").config();
 require("../DB/config");
 const express = require("express"); /* conmojs */
 const path = require("path");
 const cors = require("cors");
+const verificarToken = require("../middlewares/auth"); // Importar el middleware de verificación de token
 
 class Server {
   constructor() {
@@ -10,6 +12,7 @@ class Server {
     this.middlewares();
     this.rutas();
   }
+
   middlewares() {
     this.app.use(cors());
     this.app.use(express.json());
@@ -17,9 +20,12 @@ class Server {
   }
 
   rutas() {
+    // Rutas públicas (no requieren autenticación)
     this.app.use("/clases", require("../routes/productos.routes"));
     this.app.use("/usuarios", require("../routes/usuarios.routes"));
-    this.app.use("/turnos", require("../routes/turnosRoutes"));
+
+    // Rutas protegidas (requieren autenticación)
+    this.app.use("/turnos", verificarToken, require("../routes/turnosRoutes"));
   }
 
   listen() {
