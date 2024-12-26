@@ -18,7 +18,7 @@ const TurnoSchema = new mongoose.Schema(
     clase: {
       type: mongoose.Schema.Types.ObjectId, // Relacionado con la colección de clases
       ref: "Producto",
-      enum: ["CrossFit", "Pilates", "Funcional"],
+      // enum: ["CrossFit", "Pilates", "Funcional"],
       required: [true, "La clase es obligatoria"],
     },
   },
