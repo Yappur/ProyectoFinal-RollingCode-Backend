@@ -1,26 +1,25 @@
 const Turno = require("../models/turnos.schema");
-const Producto = require("../models/producto.schema");
+const Clase = require("../models/producto.schema");
 const crearTurno = async (req, res) => {
   try {
-    const usuarioId = req.usuario.id; // ID del usuario extraído del token
+    console.log("Request body:", req.body); // Verifica los datos enviados
+    const usuarioId = req.usuario.id;
+    console.log("Usuario ID:", usuarioId); // Verifica que el ID del usuario esté presente
     const { fecha, hora, clase } = req.body;
 
-    // Validar que los datos necesarios estén presentes
     if (!fecha || !hora || !clase) {
       return res
         .status(400)
         .json({ mensaje: "Todos los campos son requeridos" });
     }
 
-    // Validar que la clase exista
-    const claseExistente = await Producto.findById(clase);
+    const claseExistente = await Clase.findById(clase);
     if (!claseExistente) {
       return res.status(404).json({ mensaje: "La clase no existe" });
     }
 
-    // Crear el turno
     const nuevoTurno = new Turno({
-      usuario: usuarioId, // Asignar el usuario desde el token
+      usuario: usuarioId,
       fecha,
       hora,
       clase,
@@ -32,6 +31,7 @@ const crearTurno = async (req, res) => {
       .status(201)
       .json({ mensaje: "Turno creado exitosamente", turno: nuevoTurno });
   } catch (error) {
+    console.error("Error al crear el turno:", error.message); // Registra errores
     res
       .status(500)
       .json({ mensaje: "Error al crear el turno", error: error.message });
@@ -40,11 +40,11 @@ const crearTurno = async (req, res) => {
 
 const obtenerTurnos = async (req, res) => {
   try {
-    const usuarioId = req.usuario.id; // ID del usuario extraído del token
+    const usuarioId = req.usuario.id;
 
-    const turnos = await Turno.find({ usuario: usuarioId }) // Filtrar turnos por usuario
-      .populate("clase", "nombre descripcion") // Información de la clase
-      .sort({ fecha: 1, hora: 1 }); // Ordenar por fecha y hora
+    const turnos = await Turno.find({ usuario: usuarioId })
+      .populate("clase", "nombre descripcion") // Clase en lugar de Producto
+      .sort({ fecha: 1, hora: 1 });
 
     res.status(200).json(turnos);
   } catch (error) {
@@ -56,12 +56,11 @@ const obtenerTurnos = async (req, res) => {
 
 const obtenerTurnoPorId = async (req, res) => {
   try {
-    const usuarioId = req.usuario.id; // ID del usuario extraído del token
-    const { id } = req.params; // ID del turno a buscar
+    const usuarioId = req.usuario.id;
+    const { id } = req.params;
 
-    // Buscar el turno con el ID y verificar que pertenece al usuario autenticado
     const turno = await Turno.findOne({ _id: id, usuario: usuarioId })
-      .populate("clase", "nombre descripcion") // Opcional: traer información de la clase
+      .populate("clase", "nombre descripcion") // Clase en lugar de Producto
       .exec();
 
     if (!turno) {
@@ -80,13 +79,12 @@ const obtenerTurnoPorId = async (req, res) => {
 
 const actualizarTurno = async (req, res) => {
   try {
-    const usuarioId = req.usuario.id; // ID del usuario extraído del token
-    const { id } = req.params; // ID del turno a actualizar
-    const { fecha, hora, clase } = req.body; // Datos a actualizar
+    const usuarioId = req.usuario.id;
+    const { id } = req.params;
+    const { fecha, hora, clase } = req.body;
 
-    // Validar si se incluye un ID de clase y verificar que existe
     if (clase) {
-      const claseExistente = await Clase.findById(clase);
+      const claseExistente = await Clase.findById(clase); // Clase en lugar de Producto
       if (!claseExistente) {
         return res
           .status(404)
@@ -94,11 +92,10 @@ const actualizarTurno = async (req, res) => {
       }
     }
 
-    // Buscar y actualizar el turno solo si pertenece al usuario autenticado
     const turnoActualizado = await Turno.findOneAndUpdate(
-      { _id: id, usuario: usuarioId }, // Filtro: turno y usuario deben coincidir
-      { fecha, hora, clase }, // Campos a actualizar
-      { new: true, runValidators: true } // Opciones: devolver el turno actualizado y validar datos
+      { _id: id, usuario: usuarioId },
+      { fecha, hora, clase },
+      { new: true, runValidators: true }
     );
 
     if (!turnoActualizado) {
@@ -107,12 +104,10 @@ const actualizarTurno = async (req, res) => {
         .json({ mensaje: "Turno no encontrado o no pertenece al usuario" });
     }
 
-    res
-      .status(200)
-      .json({
-        mensaje: "Turno actualizado exitosamente",
-        turno: turnoActualizado,
-      });
+    res.status(200).json({
+      mensaje: "Turno actualizado exitosamente",
+      turno: turnoActualizado,
+    });
   } catch (error) {
     res
       .status(500)

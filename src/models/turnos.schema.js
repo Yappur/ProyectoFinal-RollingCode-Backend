@@ -16,8 +16,8 @@ const TurnoSchema = new mongoose.Schema(
       required: [true, "La hora es obligatoria"],
     },
     clase: {
-      type: mongoose.Schema.Types.ObjectId, // Relacionado con la colección de clases
-      ref: "Producto",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Clase",
       // enum: ["CrossFit", "Pilates", "Funcional"],
       required: [true, "La clase es obligatoria"],
     },
