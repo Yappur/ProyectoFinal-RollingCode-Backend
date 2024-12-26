@@ -1,4 +1,5 @@
 const { Schema, model } = require("mongoose");
+const bcrypt = require("bcryptjs"); // Importar bcrypt para la encriptación de contraseñas
 
 const UsersSchema = new Schema({
   nombreUsuario: {
@@ -29,10 +30,16 @@ const UsersSchema = new Schema({
   },
 });
 
-// UsersSchema.methods.toJSON = function () {
-//   const { __v, password, _id, ...usuario } = this.toObject();
-//   usuario.uid = _id;
-//   return usuario;
-// };
+// Método para comparar contraseñas (usando bcrypt)
+UsersSchema.methods.compararContrasenia = async function (contrasenia) {
+  return bcrypt.compare(contrasenia, this.contrasenia); // Comparar la contraseña ingresada con la encriptada
+};
+
+// Encriptar la contraseña antes de guardarla en la base de datos
+UsersSchema.pre("save", async function (next) {
+  if (!this.isModified("contrasenia")) return next(); // Solo encriptar si la contraseña ha sido modificada
+  this.contrasenia = await bcrypt.hash(this.contrasenia, 10); // Encriptar la contraseña con bcrypt
+  next();
+});
 
 module.exports = model("Usuario", UsersSchema);
