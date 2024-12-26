@@ -12,7 +12,6 @@ const {
 
 router.get("/listaUsuarios", obtenerTodosLosUsuarios);
 router.get("/:idUsuario", obtenerUnUsuario);
-
 router.post("/crearUsuario", crearUsuario);
 router.put("/:idUsuario", actualizarUnUsuario);
 

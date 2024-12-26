@@ -4,7 +4,7 @@ const Usuario = require("../models/usuario"); // Este es tu modelo de Usuario
 // Función para generar el token JWT
 const generarToken = (usuarioId) => {
   return jwt.sign({ id: usuarioId }, process.env.JWT_SECRET, {
-    expiresIn: "1h", // El token expirará en una hora, puedes ajustar este valor
+    expiresIn: "5h", // El token expirará en una hora, puedes ajustar este valor
   });
 };
 
@@ -22,7 +22,7 @@ const login = async (req, res) => {
     }
 
     // Verificar la contraseña, asumiendo que usas bcrypt para encriptar la contraseña
-    const esValida = await usuario.compararPassword(password); // Comparar con la contraseña almacenada en la DB
+    const esValida = await usuario.compararContrasenia(contrasenia); // Comparar con la contraseña almacenada en la DB
 
     if (!esValida) {
       // Si la contraseña es incorrecta, respondemos con un error
