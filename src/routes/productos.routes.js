@@ -1,27 +1,11 @@
 const express = require("express");
 const router = express.Router();
+const clasesController = require("../controllers/produtos.contollers");
 
-const {
-  obtenerProductos,
-  obtenerProducto,
-  crearProducto,
-  actualizarProducto,
-  borrarUnProducto,
-  borradoFisicodelProducto,
-} = require("../controllers/produtos.contollers");
-
-/*Request - esto es la solicitud que me manda el cliente (front) al server (back)*/
-/*Response: esto es la respuesta del servidor (back) al cliente (front)*/
-
-/*GET - R - Read - Solo Obtener - Todos los productos*/
-router.get("/listaProductos", obtenerProductos);
-/*GET - Un Producto*/
-router.get("/:idProducto", obtenerProducto);
-/*POST - Crear un producto*/
-router.post("/crearProducto", crearProducto);
-/*PUT - Actualizar un Producto */
-router.put("/:idProducto", actualizarProducto);
-/*DELETE - Borrado Fisico de un Producto*/
-router.delete("/:idProducto", borradoFisicodelProducto);
+router.get("/listaClases", clasesController.obtenerClases);
+router.get("/:idClase", clasesController.obtenerClase);
+router.post("/crearClase", clasesController.crearClase);
+router.put("/:idClase", clasesController.actualizarClase);
+router.delete("/:idClase", clasesController.borradoFisicoDeLaClase);
 
 module.exports = router;

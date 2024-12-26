@@ -1,40 +1,40 @@
 const { response, request } = require("express");
-const Producto = require("../models/producto.schema");
+const Clase = require("../models/producto.schema");
 
-const obtenerProductos = async (req = request, res = response) => {
+const obtenerClases = async (req = request, res = response) => {
   const { _id } = req.query;
   try {
-    const [total, productos] = await Promise.all([
-      Producto.countDocuments(),
-      Producto.find(_id).sort({ nombre: 1 }),
+    const [total, clases] = await Promise.all([
+      Clase.countDocuments(),
+      Clase.find(_id).sort({ nombre: 1 }),
     ]);
     res.json({
       total,
-      productos,
+      clases,
     });
   } catch (error) {
     console.log(error);
     res.status(500).json({
-      msg: "Error al obtener los productos",
+      msg: "Error al obtener las clases",
     });
   }
 };
 
-const obtenerProducto = async (req = request, res = response) => {
-  const { idProducto } = req.params;
-  const producto = await Producto.findById(idProducto);
+const obtenerClase = async (req = request, res = response) => {
+  const { idClase } = req.params;
+  const clase = await Clase.findById(idClase);
   res.json({
-    producto,
+    clase,
   });
 };
 
-const crearProducto = async (req = request, res = response) => {
+const crearClase = async (req = request, res = response) => {
   const { nombre, precio, categoria, descripcion, img, stock } = req.body;
 
-  const productoDB = await Producto.findOne({ nombre });
-  if (productoDB) {
+  const claseDB = await Clase.findOne({ nombre });
+  if (claseDB) {
     return res.status(400).json({
-      msg: `El producto ${productoDB.nombre} ya existe`,
+      msg: `La clase ${claseDB.nombre} ya existe`,
     });
   }
 
@@ -44,17 +44,17 @@ const crearProducto = async (req = request, res = response) => {
     descripcion,
     img,
   };
-  const producto = new Producto(data);
+  const clase = new Clase(data);
 
-  await producto.save();
-  console.log(producto);
+  await clase.save();
+  console.log(clase);
   res.status(201).json({
-    msg: "Se agregó producto",
+    msg: "Se agregó la clase",
   });
 };
 
-const actualizarProducto = async (req = request, res = response) => {
-  const { idProducto } = req.params;
+const actualizarClase = async (req = request, res = response) => {
+  const { idClase } = req.params;
   const { nombre, categoria, descripcion, disponible } = req.body;
 
   let data = {
@@ -75,41 +75,41 @@ const actualizarProducto = async (req = request, res = response) => {
     data.img = req.body.img;
   }
 
-  const producto = await Producto.findByIdAndUpdate(idProducto, data, {
+  const clase = await Clase.findByIdAndUpdate(idClase, data, {
     new: true,
   });
-  res.status(200).json(producto);
+  res.status(200).json(clase);
 };
 
-const borradoFisicodelProducto = async (req = request, res = response) => {
-  const { idProducto } = req.params;
+const borradoFisicoDeLaClase = async (req = request, res = response) => {
+  const { idClase } = req.params;
 
   try {
-    const productoBorrado = await Producto.findOneAndDelete({
-      _id: idProducto,
+    const claseBorrada = await Clase.findOneAndDelete({
+      _id: idClase,
     });
 
-    if (!productoBorrado) {
+    if (!claseBorrada) {
       return res.status(404).json({
-        mensaje: "Producto no encontrado",
+        mensaje: "Clase no encontrada",
       });
     }
 
     res.json({
-      mensaje: "Producto eliminado",
+      mensaje: "Clase eliminada",
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      mensaje: "Error al intentar borrar el producto",
+      mensaje: "Error al intentar borrar la clase",
     });
   }
 };
 
 module.exports = {
-  obtenerProductos,
-  obtenerProducto,
-  crearProducto,
-  actualizarProducto,
-  borradoFisicodelProducto,
+  obtenerClases,
+  obtenerClase,
+  crearClase,
+  actualizarClase,
+  borradoFisicoDeLaClase,
 };

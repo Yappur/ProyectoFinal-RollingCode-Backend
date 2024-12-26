@@ -178,23 +178,23 @@ const inicioDeSesionUsuario = async (req, res) => {
   const { emailUsuario, contrasenia } = req.body;
 
   try {
-    // Buscar el usuario por nombre de usuario
+    // Buscar el usuario por email
     const usuario = await Usuario.findOne({ emailUsuario });
     if (!usuario) {
-      return res.status(400).json({ msg: "email no encontrado" });
+      return res.status(400).json({ msg: "Email no encontrado" });
     }
 
-    // Comparar la contraseña ingresada con el hash en la base de datos
+    // Comparar la contraseña ingresada con el hash almacenado
     const esValida = await bcrypt.compare(contrasenia, usuario.contrasenia);
     if (!esValida) {
-      return res.status(400).json({ msg: "Contraseña incorrecta" });
+      return res.status(401).json({ msg: "Credenciales incorrectas" });
     }
 
-    // Generar el token
+    // Generar el token JWT
     const token = jwt.sign(
       { id: usuario._id, role: usuario.role },
-      "tuClaveSecreta",
-      { expiresIn: "2h" }
+      process.env.JWT_SECRET,
+      { expiresIn: "5h" }
     );
 
     return res.status(200).json({
