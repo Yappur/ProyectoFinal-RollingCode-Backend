@@ -10,7 +10,7 @@ const generarToken = (usuarioId) => {
 
 // Función para manejar el login
 const login = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, contrasenia } = req.body;
 
   try {
     // Buscar al usuario en la base de datos por su email
