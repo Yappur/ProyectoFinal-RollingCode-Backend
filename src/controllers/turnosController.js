@@ -6,11 +6,15 @@ const crearTurno = async (req, res) => {
     const usuarioId = req.usuario.id;
     const { fecha, hora, clase } = req.body;
 
+    console.log(req.body);
+
+    console.log("Datos de la solicitud:", { fecha, hora, clase }); // Log de los datos de la solicitud
+
     if (!fecha || !hora || !clase) {
       return res.status(400).json({ mensaje: "Faltan campos requeridos" });
     }
 
-    const claseExistente = await Producto.findById(clase);
+    const claseExistente = await Clase.findById(clase);
     if (!claseExistente) {
       return res.status(404).json({ mensaje: "Clase no encontrada" });
     }
@@ -23,10 +27,10 @@ const crearTurno = async (req, res) => {
     });
 
     await nuevoTurno.save();
-    console.log("Turno creado:", nuevoTurno);
+    console.log("Turno creado:", nuevoTurno); // Log del turno creado
     res.status(201).json({ mensaje: "Turno creado", turno: nuevoTurno });
   } catch (error) {
-    console.error(error);
+    console.error("Error al crear turno:", error); // Log del error
     res
       .status(500)
       .json({ mensaje: "Error al crear turno", error: error.message });
@@ -130,10 +134,15 @@ const eliminarTurno = async (req, res) => {
   }
 };
 
+const testTurno = (req, res) => {
+  res.status(200).json({ mensaje: "El test del turno está funcionando" });
+};
+
 module.exports = {
   crearTurno,
   obtenerTurnos,
   obtenerTurnoPorId,
   actualizarTurno,
   eliminarTurno,
+  testTurno,
 };
