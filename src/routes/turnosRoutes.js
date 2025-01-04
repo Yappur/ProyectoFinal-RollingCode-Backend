@@ -5,7 +5,7 @@ const verificarToken = require("../middlewares/auth"); // Middleware del token
 
 // Rutas protegidas
 
-router.get("/", verificarToken, turnosController.obtenerTurnos);
+router.get("/listaTurnos", verificarToken, turnosController.obtenerTurnos);
 router.post("/crearTurno", verificarToken, turnosController.crearTurno);
 router.get("/testTurno", verificarToken, turnosController.testTurno);
 router.get("/:id", verificarToken, turnosController.obtenerTurnoPorId);
