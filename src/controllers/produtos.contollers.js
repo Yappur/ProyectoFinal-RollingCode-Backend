@@ -26,28 +26,41 @@ const obtenerClase = async (req = request, res = response) => {
 };
 
 const crearClase = async (req = request, res = response) => {
-  const { nombre, precio, categoria, descripcion, img, stock } = req.body;
+  const { nombreClase, categoria, descripcion, img } = req.body;
 
-  const claseDB = await Clase.findOne({ nombre });
+  // Verificar si ya existe una clase con el mismo nombre
+  const claseDB = await Clase.findOne({ nombreClase });
   if (claseDB) {
     return res.status(400).json({
-      msg: `La clase ${claseDB.nombre} ya existe`,
+      msg: `La clase ${claseDB.nombreClase} ya existe`,
     });
   }
 
+  // Preparar los datos para guardar en la base de datos
   const data = {
-    nombre,
+    nombreClase,
     categoria,
     descripcion,
     img,
   };
-  const clase = new Clase(data);
 
-  await clase.save();
-  console.log(clase);
-  res.status(201).json({
-    msg: "Se agregó la clase",
-  });
+  try {
+    const clase = new Clase(data);
+
+    // Guardar la nueva clase en la base de datos
+    await clase.save();
+
+    res.status(201).json({
+      msg: "Se agregó la clase",
+      clase,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({
+      msg: "Error al guardar la clase",
+      error,
+    });
+  }
 };
 
 const actualizarClase = async (req = request, res = response) => {

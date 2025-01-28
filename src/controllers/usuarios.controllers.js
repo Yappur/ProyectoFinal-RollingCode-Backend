@@ -5,18 +5,29 @@ const jwt = require("jsonwebtoken");
 const Usuario = require("../models/usuarios.schema");
 
 const obtenerTodosLosUsuarios = async (req = request, res = response) => {
-  const { limite = 5, desde = 0 } = req.query;
-  const query = { role: { $in: ["user", "admin"] }, bloqueado: false };
+  try {
+    const { limite = 5, desde = 0 } = req.query;
+    const query = { role: { $in: ["user", "admin"] }, bloqueado: false };
 
-  const [total, usuarios] = await Promise.all([
-    Usuario.countDocuments(query),
-    Usuario.find(query).sort({ nombre: 1 }).limit(limite).skip(desde),
-  ]);
+    const [total, usuarios] = await Promise.all([
+      Usuario.countDocuments(query),
+      Usuario.find(query)
+        .sort({ nombre: 1 })
+        .limit(Number(limite))
+        .skip(Number(desde)),
+    ]);
 
-  res.status(200).json({
-    total,
-    usuarios,
-  });
+    res.status(200).json({
+      total,
+      usuarios,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      mensaje: "Error al obtener usuarios",
+      error: error.message,
+    });
+  }
 };
 const obtenerUnUsuario = async (req = request, res = response) => {
   const { idUsuario } = req.params;
@@ -150,26 +161,29 @@ const actualizarUnUsuario = async (req = request, res = response) => {
 
 // borrar un usuario
 const borradoFisicoUsuario = async (req = request, res = response) => {
-  const { idUsuario } = req.params;
+  const { id } = req.params; // Cambiado de idUsuario a id para coincidir con el frontend
 
   try {
-    const usuarioBorrado = await Usuario.findOneAndDelete({
-      _id: idUsuario,
-    });
+    // Verificar si el usuario existe antes de intentar borrarlo
+    const usuario = await Usuario.findById(id);
 
-    if (!usuarioBorrado) {
+    if (!usuario) {
       return res.status(404).json({
         mensaje: "Usuario no encontrado",
       });
     }
 
-    res.json({
+    // Realizar el borrado
+    await Usuario.findByIdAndDelete(id);
+
+    res.status(200).json({
       mensaje: "Usuario eliminado",
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
       mensaje: "Error al intentar borrar el Usuario",
+      error: error.message,
     });
   }
 };

@@ -75,6 +75,44 @@ const obtenerTurnoPorId = async (req, res) => {
   }
 };
 
+const getTurnosUsuario = async (req, res) => {
+  try {
+    // Verificar si existe el usuario en el request
+    if (!req.usuario || !req.usuario.id) {
+      return res.status(401).json({
+        mensaje: "No hay token válido o el usuario no está autenticado",
+      });
+    }
+
+    const usuarioId = req.usuario.id;
+
+    // Buscar turnos con el ID del usuario y aplicar populate
+    const turnos = await Turno.find({ usuario: usuarioId })
+      .populate("clase", "nombre")
+      .sort({ fecha: 1, hora: 1 });
+
+    // Verificar si se encontraron turnos
+    if (!turnos.length) {
+      return res.status(200).json({
+        mensaje: "No se encontraron turnos para este usuario",
+        turnos: [],
+      });
+    }
+
+    // Devolver los turnos encontrados
+    res.json({
+      mensaje: "Turnos encontrados exitosamente",
+      turnos,
+    });
+  } catch (error) {
+    console.error("Error en getTurnosUsuario:", error);
+    res.status(500).json({
+      mensaje: "Error al obtener los turnos",
+      error: error.message,
+    });
+  }
+};
+
 const actualizarTurno = async (req, res) => {
   try {
     const usuarioId = req.usuario.id;
@@ -82,7 +120,7 @@ const actualizarTurno = async (req, res) => {
     const { fecha, hora, clase } = req.body;
 
     if (clase) {
-      const claseExistente = await Clase.findById(clase); // Clase en lugar de Producto
+      const claseExistente = await Clase.findById(clase);
       if (!claseExistente) {
         return res
           .status(404)
@@ -142,6 +180,7 @@ module.exports = {
   crearTurno,
   obtenerTurnos,
   obtenerTurnoPorId,
+  getTurnosUsuario,
   actualizarTurno,
   eliminarTurno,
   testTurno,
