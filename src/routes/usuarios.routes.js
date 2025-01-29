@@ -17,6 +17,6 @@ router.put("/:idUsuario", actualizarUnUsuario);
 
 router.post("/iniciarSesion", inicioDeSesionUsuario);
 
-router.delete("/:idUsuario", borradoFisicoUsuario);
+router.delete("/borrado/:id", borradoFisicoUsuario);
 
 module.exports = router;

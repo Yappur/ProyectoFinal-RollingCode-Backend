@@ -6,23 +6,25 @@ const Usuario = require("../models/usuarios.schema");
 
 const obtenerTodosLosUsuarios = async (req = request, res = response) => {
   try {
-    const { limite = 5, desde = 0 } = req.query;
-    const query = { role: { $in: ["user", "admin"] }, bloqueado: false };
+    const limite = Math.max(1, parseInt(req.query.limite) || 10); // Asegurar que limite sea al menos 1
+    const desde = Math.max(0, parseInt(req.query.desde) || 0); // Asegurar que desde sea >= 0
+    const query = { role: { $in: ["user", "admin"] }, bloqueado: false }; // Filtrar usuarios válidos
 
     const [total, usuarios] = await Promise.all([
       Usuario.countDocuments(query),
       Usuario.find(query)
+        .select("-contrasenia") // Excluye el campo de contraseña
         .sort({ nombre: 1 })
-        .limit(Number(limite))
-        .skip(Number(desde)),
+        .limit(limite)
+        .skip(desde),
     ]);
 
     res.status(200).json({
-      total,
-      usuarios,
+      total, // Número total de usuarios
+      usuarios, // Lista paginada de usuarios
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error al obtener usuarios:", error);
     res.status(500).json({
       mensaje: "Error al obtener usuarios",
       error: error.message,

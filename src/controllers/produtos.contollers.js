@@ -65,22 +65,22 @@ const crearClase = async (req = request, res = response) => {
 
 const actualizarClase = async (req = request, res = response) => {
   const { idClase } = req.params;
-  const { nombre, categoria, descripcion, disponible } = req.body;
+  const { nombreClase, categoria, descripcion, disponible } = req.body;
 
   let data = {
-    nombre,
+    nombreClase,
     descripcion,
     categoria,
     disponible,
   };
 
-  if (req.body.nombre) {
-    data.nombre = req.body.nombre;
+  if (req.body.nombreClase) {
+    data.nombreClase = req.body.nombreClase;
   }
 
-  if (req.body.stock) {
-    data.stock = req.body.stock;
-  }
+  // if (req.body.stock) {
+  //   data.stock = req.body.stock;
+  // }
   if (req.body.img) {
     data.img = req.body.img;
   }
