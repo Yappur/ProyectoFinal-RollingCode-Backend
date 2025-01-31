@@ -8,7 +8,7 @@ const obtenerClases = async (req = request, res = response) => {
     const filter = _id && mongoose.Types.ObjectId.isValid(_id) ? { _id } : {};
     const [total, clases] = await Promise.all([
       Clase.countDocuments(filter),
-      Clase.find(filter).sort({ nombre: 1 }),
+      Clase.find(filter).sort({ nombreClase: 1 }),
     ]);
     res.json({ total, clases });
   } catch (error) {
@@ -26,28 +26,34 @@ const obtenerClase = async (req = request, res = response) => {
 };
 
 const crearClase = async (req = request, res = response) => {
-  const { nombreClase, categoria, descripcion, img } = req.body;
-
-  // Verificar si ya existe una clase con el mismo nombre
-  const claseDB = await Clase.findOne({ nombreClase });
-  if (claseDB) {
-    return res.status(400).json({
-      msg: `La clase ${claseDB.nombreClase} ya existe`,
-    });
-  }
-
-  // Preparar los datos para guardar en la base de datos
-  const data = {
-    nombreClase,
-    categoria,
-    descripcion,
-    img,
-  };
-
   try {
-    const clase = new Clase(data);
+    // Verificar que todos los campos requeridos estén presentes
+    const { nombreClase, categoria, descripcion, img } = req.body;
 
-    // Guardar la nueva clase en la base de datos
+    if (!nombreClase || !categoria || !descripcion) {
+      return res.status(400).json({
+        msg: "Faltan campos requeridos",
+        campos: { nombreClase, categoria, descripcion },
+      });
+    }
+
+    // Verificar si ya existe una clase con el mismo nombre
+    const claseDB = await Clase.findOne({ nombreClase });
+    if (claseDB) {
+      return res.status(400).json({
+        msg: `La clase ${claseDB.nombreClase} ya existe`,
+      });
+    }
+
+    // Preparar los datos para guardar en la base de datos
+    const data = {
+      nombreClase,
+      categoria,
+      descripcion,
+      img,
+    };
+
+    const clase = new Clase(data);
     await clase.save();
 
     res.status(201).json({
@@ -55,10 +61,11 @@ const crearClase = async (req = request, res = response) => {
       clase,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error detallado:", error);
     res.status(400).json({
       msg: "Error al guardar la clase",
-      error,
+      error: error.message,
+      detalles: error.errors, // Esto mostrará errores de validación de Mongoose
     });
   }
 };
