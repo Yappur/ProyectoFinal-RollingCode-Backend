@@ -152,22 +152,32 @@ const actualizarTurno = async (req, res) => {
 
 const eliminarTurno = async (req, res) => {
   try {
-    const usuarioId = req.usuario.id; // ID del usuario extraído del token
-    const { id } = req.params; // ID del turno a eliminar
+    const usuarioId = req.usuario.id;
+    const userRole = req.usuario.role; // Asumiendo que tienes roles
+    const { id } = req.params;
 
-    const turno = await Turno.findOneAndDelete({ _id: id, usuario: usuarioId });
+    const turno = await Turno.findById(id);
 
     if (!turno) {
-      return res
-        .status(404)
-        .json({ mensaje: "Turno no encontrado o no pertenece al usuario" });
+      return res.status(404).json({ mensaje: "Turno no encontrado" });
     }
+
+    // Si es admin puede eliminar cualquier turno, si no, solo los suyos
+    if (userRole !== "admin" && turno.usuario.toString() !== usuarioId) {
+      return res.status(403).json({
+        mensaje: "No tienes permiso para eliminar este turno",
+      });
+    }
+
+    await Turno.findByIdAndDelete(id);
 
     res.status(200).json({ mensaje: "Turno eliminado exitosamente" });
   } catch (error) {
-    res
-      .status(500)
-      .json({ mensaje: "Error al eliminar el turno", error: error.message });
+    console.error("Error al eliminar turno:", error);
+    res.status(500).json({
+      mensaje: "Error al eliminar el turno",
+      error: error.message,
+    });
   }
 };
 
