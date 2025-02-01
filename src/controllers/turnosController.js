@@ -38,10 +38,9 @@ const crearTurno = async (req, res) => {
 };
 const obtenerTurnos = async (req, res) => {
   try {
-    const usuarioId = req.usuario.id;
-
-    const turnos = await Turno.find({ usuario: usuarioId })
-      .populate("clase", "nombre descripcion") // Clase en lugar de Producto
+    const turnos = await Turno.find()
+      .populate("clase", "nombreClase")
+      .populate("usuario", "nombreUsuario") // Opcional: traer info del usuario
       .sort({ fecha: 1, hora: 1 });
 
     res.status(200).json(turnos);
