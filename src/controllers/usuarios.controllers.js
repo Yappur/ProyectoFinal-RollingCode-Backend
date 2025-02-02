@@ -6,22 +6,31 @@ const Usuario = require("../models/usuarios.schema");
 
 const obtenerTodosLosUsuarios = async (req = request, res = response) => {
   try {
-    const limite = Math.max(1, parseInt(req.query.limite) || 10); // Asegurar que limite sea al menos 1
-    const desde = Math.max(0, parseInt(req.query.desde) || 0); // Asegurar que desde sea >= 0
-    const query = { role: { $in: ["user", "admin"] }, bloqueado: false }; // Filtrar usuarios válidos
+    const limite = Math.max(1, parseInt(req.query.limite) || 5); // Cambiado a 5 para coincidir con el frontend
+    const desde = Math.max(0, parseInt(req.query.desde) || 0);
+    const query = { role: { $in: ["user", "admin"] } }; // Removida la restricción de bloqueado: false
 
     const [total, usuarios] = await Promise.all([
       Usuario.countDocuments(query),
       Usuario.find(query)
-        .select("-contrasenia") // Excluye el campo de contraseña
-        .sort({ nombre: 1 })
+        .select("nombreUsuario emailUsuario role bloqueado") // Seleccionar específicamente los campos que necesitamos
+        .sort({ nombreUsuario: 1 })
         .limit(limite)
         .skip(desde),
     ]);
 
+    // Verificar que los datos sean válidos antes de enviarlos
+    const usuariosFiltrados = usuarios.map((usuario) => ({
+      _id: usuario._id,
+      nombreUsuario: usuario.nombreUsuario,
+      emailUsuario: usuario.emailUsuario,
+      role: usuario.role,
+      bloqueado: usuario.bloqueado,
+    }));
+
     res.status(200).json({
-      total, // Número total de usuarios
-      usuarios, // Lista paginada de usuarios
+      total,
+      usuarios: usuariosFiltrados,
     });
   } catch (error) {
     console.error("Error al obtener usuarios:", error);
