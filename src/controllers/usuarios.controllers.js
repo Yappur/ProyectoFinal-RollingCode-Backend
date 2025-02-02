@@ -200,19 +200,20 @@ const borradoFisicoUsuario = async (req = request, res = response) => {
 };
 
 const cambiarRolUsuario = async (req = request, res = response) => {
-  const { idUsuario } = req.params;
+  const { id } = req.params; // Cambiado de idUsuario a id
 
   try {
-    const usuario = await Usuario.findById(idUsuario);
+    const usuario = await Usuario.findById(id);
     if (!usuario) {
       return res.status(404).json({ mensaje: "Usuario no encontrado" });
     }
 
-    // Cambiar el rol (alternar entre 'user' y 'admin')
+    console.log("Usuario encontrado:", usuario); // Depuración
+
     const nuevoRol = usuario.role === "user" ? "admin" : "user";
 
     const usuarioActualizado = await Usuario.findByIdAndUpdate(
-      idUsuario,
+      id,
       { role: nuevoRol },
       { new: true }
     );
@@ -231,10 +232,10 @@ const cambiarRolUsuario = async (req = request, res = response) => {
 };
 
 const toggleBloqueoUsuario = async (req = request, res = response) => {
-  const { idUsuario } = req.params;
+  const { id } = req.params;
 
   try {
-    const usuario = await Usuario.findById(idUsuario);
+    const usuario = await Usuario.findById(id);
     if (!usuario) {
       return res.status(404).json({ mensaje: "Usuario no encontrado" });
     }
@@ -243,7 +244,7 @@ const toggleBloqueoUsuario = async (req = request, res = response) => {
     const nuevoEstado = !usuario.bloqueado;
 
     const usuarioActualizado = await Usuario.findByIdAndUpdate(
-      idUsuario,
+      id,
       { bloqueado: nuevoEstado },
       { new: true }
     );
