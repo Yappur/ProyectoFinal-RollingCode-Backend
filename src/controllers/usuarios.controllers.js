@@ -199,6 +199,70 @@ const borradoFisicoUsuario = async (req = request, res = response) => {
   }
 };
 
+const cambiarRolUsuario = async (req = request, res = response) => {
+  const { idUsuario } = req.params;
+
+  try {
+    const usuario = await Usuario.findById(idUsuario);
+    if (!usuario) {
+      return res.status(404).json({ mensaje: "Usuario no encontrado" });
+    }
+
+    // Cambiar el rol (alternar entre 'user' y 'admin')
+    const nuevoRol = usuario.role === "user" ? "admin" : "user";
+
+    const usuarioActualizado = await Usuario.findByIdAndUpdate(
+      idUsuario,
+      { role: nuevoRol },
+      { new: true }
+    );
+
+    res.status(200).json({
+      mensaje: "Rol de usuario actualizado",
+      usuario: usuarioActualizado,
+    });
+  } catch (error) {
+    console.error("Error al cambiar el rol:", error);
+    res.status(500).json({
+      mensaje: "Error al cambiar el rol del usuario",
+      error: error.message,
+    });
+  }
+};
+
+const toggleBloqueoUsuario = async (req = request, res = response) => {
+  const { idUsuario } = req.params;
+
+  try {
+    const usuario = await Usuario.findById(idUsuario);
+    if (!usuario) {
+      return res.status(404).json({ mensaje: "Usuario no encontrado" });
+    }
+
+    // Cambiar el estado de bloqueo
+    const nuevoEstado = !usuario.bloqueado;
+
+    const usuarioActualizado = await Usuario.findByIdAndUpdate(
+      idUsuario,
+      { bloqueado: nuevoEstado },
+      { new: true }
+    );
+
+    res.status(200).json({
+      mensaje: `Usuario ${
+        nuevoEstado ? "bloqueado" : "desbloqueado"
+      } exitosamente`,
+      usuario: usuarioActualizado,
+    });
+  } catch (error) {
+    console.error("Error al cambiar estado de bloqueo:", error);
+    res.status(500).json({
+      mensaje: "Error al cambiar estado de bloqueo del usuario",
+      error: error.message,
+    });
+  }
+};
+
 const inicioDeSesionUsuario = async (req, res) => {
   const { emailUsuario, contrasenia } = req.body;
 
@@ -240,4 +304,6 @@ module.exports = {
   actualizarUnUsuario,
   borradoFisicoUsuario,
   inicioDeSesionUsuario,
+  cambiarRolUsuario,
+  toggleBloqueoUsuario,
 };
