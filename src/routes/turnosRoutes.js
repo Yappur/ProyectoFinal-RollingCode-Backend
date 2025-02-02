@@ -11,6 +11,8 @@ router.get("/testTurno", verificarToken, turnosController.testTurno);
 router.get("/turnosUsuario", verificarToken, turnosController.getTurnosUsuario);
 router.get("/:id", verificarToken, turnosController.obtenerTurnoPorId);
 router.put("/:id", verificarToken, turnosController.actualizarTurno);
+router.put("/cambiarRol/:idUsuario", cambiarRolUsuario);
+router.put("/toggleBloqueo/:idUsuario", toggleBloqueoUsuario);
 router.delete("/:id", verificarToken, turnosController.eliminarTurno);
 
 module.exports = router;
