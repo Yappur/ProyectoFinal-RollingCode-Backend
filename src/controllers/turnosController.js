@@ -115,9 +115,18 @@ const getTurnosUsuario = async (req, res) => {
 const actualizarTurno = async (req, res) => {
   try {
     const usuarioId = req.usuario.id;
+    const isAdmin = req.usuario.role === "admin";
     const { id } = req.params;
     const { fecha, hora, clase } = req.body;
 
+    // Primero, obtener el turno actual para preservar el usuario original
+    const turnoExistente = await Turno.findById(id);
+
+    if (!turnoExistente) {
+      return res.status(404).json({ mensaje: "Turno no encontrado" });
+    }
+
+    // Validar que la clase existe
     if (clase) {
       const claseExistente = await Clase.findById(clase);
       if (!claseExistente) {
@@ -127,16 +136,33 @@ const actualizarTurno = async (req, res) => {
       }
     }
 
+    let query;
+    if (isAdmin) {
+      query = { _id: id };
+    } else {
+      query = { _id: id, usuario: usuarioId };
+    }
+
+    // Mantener el usuario original en el turno
     const turnoActualizado = await Turno.findOneAndUpdate(
-      { _id: id, usuario: usuarioId },
-      { fecha, hora, clase },
+      query,
+      {
+        fecha,
+        hora,
+        clase,
+        usuario: turnoExistente.usuario, // Mantener el usuario original
+      },
       { new: true, runValidators: true }
-    );
+    )
+      .populate("clase")
+      .populate("usuario", "nombreUsuario emailUsuario"); // Poblar información del usuario
 
     if (!turnoActualizado) {
-      return res
-        .status(404)
-        .json({ mensaje: "Turno no encontrado o no pertenece al usuario" });
+      return res.status(404).json({
+        mensaje: isAdmin
+          ? "Turno no encontrado"
+          : "Turno no encontrado o no pertenece al usuario",
+      });
     }
 
     res.status(200).json({
@@ -144,12 +170,12 @@ const actualizarTurno = async (req, res) => {
       turno: turnoActualizado,
     });
   } catch (error) {
+    console.error("Error en actualizarTurno:", error);
     res
       .status(500)
       .json({ mensaje: "Error al actualizar el turno", error: error.message });
   }
 };
-
 const eliminarTurno = async (req, res) => {
   try {
     const usuarioId = req.usuario.id;
