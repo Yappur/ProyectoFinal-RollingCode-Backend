@@ -76,7 +76,6 @@ const obtenerTurnoPorId = async (req, res) => {
 
 const getTurnosUsuario = async (req, res) => {
   try {
-    // Verificar si existe el usuario en el request
     if (!req.usuario || !req.usuario.id) {
       return res.status(401).json({
         mensaje: "No hay token válido o el usuario no está autenticado",
@@ -85,12 +84,14 @@ const getTurnosUsuario = async (req, res) => {
 
     const usuarioId = req.usuario.id;
 
-    // Buscar turnos con el ID del usuario y aplicar populate
+    // Modificar el populate para incluir nombreClase y descripcion
     const turnos = await Turno.find({ usuario: usuarioId })
-      .populate("clase", "nombre")
+      .populate("clase", "nombreClase descripcion") // Cambiado de "nombre" a "nombreClase"
       .sort({ fecha: 1, hora: 1 });
 
-    // Verificar si se encontraron turnos
+    // Agregar un console.log para debugging
+    console.log("Turnos encontrados:", JSON.stringify(turnos[0], null, 2));
+
     if (!turnos.length) {
       return res.status(200).json({
         mensaje: "No se encontraron turnos para este usuario",
@@ -98,7 +99,6 @@ const getTurnosUsuario = async (req, res) => {
       });
     }
 
-    // Devolver los turnos encontrados
     res.json({
       mensaje: "Turnos encontrados exitosamente",
       turnos,

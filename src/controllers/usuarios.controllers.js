@@ -86,26 +86,27 @@ const crearUsuario = async (req = request, res = response) => {
       });
     }
 
-    // Encriptar la contraseña antes de guardar
-    const salt = bcrypt.genSaltSync(10);
-    const hashedPassword = bcrypt.hashSync(contrasenia, salt);
-
     // Crear un nuevo usuario con los datos proporcionados
     const usuario = new Usuario({
       nombreUsuario,
       emailUsuario,
-      contrasenia: hashedPassword, // Usar la contraseña encriptada
+      contrasenia, // La contraseña sin encriptar, el middleware se encargará de encriptarla
       role,
     });
 
     // Guardar el usuario en la base de datos
     await usuario.save();
+
+    // No devolver la contraseña en la respuesta
+    const usuarioSinContrasenia = usuario.toObject();
+    delete usuarioSinContrasenia.contrasenia;
+
     res.status(201).json({
-      message: "Usuario creado",
-      usuario,
+      message: "Usuario creado exitosamente",
+      usuario: usuarioSinContrasenia,
     });
   } catch (error) {
-    console.error("Error al crear el usuario:", error);
+    console.log("Error completo:", error);
     return res.status(500).json({
       msg: "Error interno del servidor",
       error: error.message,
@@ -265,22 +266,28 @@ const toggleBloqueoUsuario = async (req = request, res = response) => {
 };
 
 const inicioDeSesionUsuario = async (req, res) => {
+  console.log("Datos recibidos en login:", req.body);
   const { emailUsuario, contrasenia } = req.body;
 
   try {
-    // Buscar el usuario por email
     const usuario = await Usuario.findOne({ emailUsuario });
+    console.log("Usuario encontrado:", usuario);
+
     if (!usuario) {
       return res.status(400).json({ msg: "Email no encontrado" });
     }
 
-    // Comparar la contraseña ingresada con el hash almacenado
+    // Imprimir datos para debug (quitar en producción)
+    console.log("Contraseña recibida:", contrasenia);
+    console.log("Contraseña almacenada:", usuario.contrasenia);
+
     const esValida = await bcrypt.compare(contrasenia, usuario.contrasenia);
+    console.log("¿Contraseña válida?:", esValida);
+
     if (!esValida) {
       return res.status(401).json({ msg: "Credenciales incorrectas" });
     }
 
-    // Generar el token JWT
     const token = jwt.sign(
       { id: usuario._id, role: usuario.role },
       process.env.JWT_SECRET,
@@ -293,7 +300,7 @@ const inicioDeSesionUsuario = async (req, res) => {
       role: usuario.role,
     });
   } catch (error) {
-    console.error("Error al iniciar sesión:", error);
+    console.error("Error en login:", error);
     return res.status(500).json({ msg: "Error en el servidor" });
   }
 };
