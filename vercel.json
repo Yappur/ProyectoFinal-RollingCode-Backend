@@ -1,8 +1,27 @@
 {
   "version": 2,
-  "rewrites": [
-    { "source": "/usuarios", "destination": "/routes/usuarios.routes" },
-    { "source": "/productos", "destination": "/routes/productos.routes" },
-    { "source": "/(.*)", "destination": "/" }
+  "builds": [
+    {
+      "src": "app.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/usuarios/(.*)",
+      "dest": "app.js"
+    },
+    {
+      "src": "/clases/(.*)",
+      "dest": "app.js"
+    },
+    {
+      "src": "/turnos/(.*)",
+      "dest": "app.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "app.js"
+    }
   ]
 }
