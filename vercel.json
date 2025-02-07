@@ -8,18 +8,6 @@
   ],
   "routes": [
     {
-      "src": "/usuarios/(.*)",
-      "dest": "index.js"
-    },
-    {
-      "src": "/clases/(.*)",
-      "dest": "index.js"
-    },
-    {
-      "src": "/turnos/(.*)",
-      "dest": "index.js"
-    },
-    {
       "src": "/(.*)",
       "dest": "index.js"
     }
