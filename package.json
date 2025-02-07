@@ -5,7 +5,8 @@
   "type": "commonjs",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "build": "npm ci"
   },
   "keywords": [],
   "author": "",
@@ -18,8 +19,8 @@
     "express": "^4.20.0",
     "jsonwebtoken": "^9.0.2",
     "mercadopago": "^2.1.1",
-    "mongodb": "^6.13.0",
-    "mongoose": "^8.10.0",
+    "mongodb": "^5.9.0",
+    "mongoose": "^7.6.0",
     "morgan": "^1.10.0"
   },
   "devDependencies": {
