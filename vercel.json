@@ -2,26 +2,26 @@
   "version": 2,
   "builds": [
     {
-      "src": "app.js",
+      "src": "index.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/usuarios/(.*)",
-      "dest": "app.js"
+      "dest": "index.js"
     },
     {
       "src": "/clases/(.*)",
-      "dest": "app.js"
+      "dest": "index.js"
     },
     {
       "src": "/turnos/(.*)",
-      "dest": "app.js"
+      "dest": "index.js"
     },
     {
       "src": "/(.*)",
-      "dest": "app.js"
+      "dest": "index.js"
     }
   ]
 }
