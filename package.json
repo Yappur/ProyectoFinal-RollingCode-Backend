@@ -18,10 +18,14 @@
     "express": "^4.20.0",
     "jsonwebtoken": "^9.0.2",
     "mercadopago": "^2.1.1",
-    "mongoose": "^8.6.3",
+    "mongodb": "^6.13.0",
+    "mongoose": "^8.10.0",
     "morgan": "^1.10.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.7"
+  },
+  "engines": {
+    "node": "18.x"
   }
 }
