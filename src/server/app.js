@@ -1,9 +1,9 @@
 require("dotenv").config();
-require("./DB/config");
+require("../DB/config");
 const express = require("express");
 const path = require("path");
 const cors = require("cors");
-const verificarToken = require("./middlewares/auth");
+const verificarToken = require("../middlewares/auth");
 
 class Server {
   constructor() {
@@ -26,16 +26,14 @@ class Server {
   }
 
   rutas() {
-    this.app.use("/clases", require("./routes/productos.routes"));
-    this.app.use("/usuarios", require("./routes/usuarios.routes"));
-    this.app.use("/turnos", verificarToken, require("./routes/turnosRoutes"));
+    this.app.use("/clases", require("../routes/productos.routes"));
+    this.app.use("/usuarios", require("../routes/usuarios.routes"));
+    this.app.use("/turnos", verificarToken, require("../routes/turnosRoutes"));
   }
 
-  // Modificación para Vercel
   listen() {
     return this.app;
   }
 }
 
-// Exporta la instancia de la aplicación para Vercel
 module.exports = new Server().app;
