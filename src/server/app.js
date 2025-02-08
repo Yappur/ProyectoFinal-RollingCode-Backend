@@ -8,7 +8,7 @@ const verificarToken = require("../middlewares/auth");
 class Server {
   constructor() {
     this.app = express();
-    this.port = process.env.PORT || 3001;
+    this.port = process.env.PORT;
     this.middlewares();
     this.rutas();
   }
@@ -16,7 +16,7 @@ class Server {
   middlewares() {
     this.app.use(
       cors({
-        origin: process.env.FRONTEND_URL || "http://localhost:5173",
+        origin: process.env.FRONTEND_URL,
         credentials: true,
         methods: ["GET", "POST", "PUT", "DELETE"],
       })
@@ -31,9 +31,14 @@ class Server {
     this.app.use("/turnos", verificarToken, require("../routes/turnosRoutes"));
   }
 
+  // listen() {
+  //   return this.app;
+  // }
   listen() {
-    return this.app;
+    this.app.listen(this.port, () => {
+      console.log("servidor levantado", this.port);
+    });
   }
 }
 
-module.exports = new Server().app;
+module.exports = Server;
