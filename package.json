@@ -8,8 +8,7 @@
   },
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js",
-    "build": "node -e 'console.log(\"Build successful\")'"
+    "dev": "nodemon index.js"
   },
   "keywords": [],
   "author": "",
