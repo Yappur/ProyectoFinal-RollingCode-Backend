@@ -2,13 +2,8 @@ const Turno = require("../models/turnos.schema");
 const Clase = require("../models/producto.schema");
 const crearTurno = async (req, res) => {
   try {
-    console.log("Creando turno...");
     const usuarioId = req.usuario.id;
     const { fecha, hora, clase } = req.body;
-
-    console.log(req.body);
-
-    console.log("Datos de la solicitud:", { fecha, hora, clase }); // Log de los datos de la solicitud
 
     if (!fecha || !hora || !clase) {
       return res.status(400).json({ mensaje: "Faltan campos requeridos" });
@@ -27,7 +22,6 @@ const crearTurno = async (req, res) => {
     });
 
     await nuevoTurno.save();
-    console.log("Turno creado:", nuevoTurno); // Log del turno creado
     res.status(201).json({ mensaje: "Turno creado", turno: nuevoTurno });
   } catch (error) {
     console.error("Error al crear turno:", error); // Log del error
@@ -88,9 +82,6 @@ const getTurnosUsuario = async (req, res) => {
     const turnos = await Turno.find({ usuario: usuarioId })
       .populate("clase", "nombreClase descripcion") // Cambiado de "nombre" a "nombreClase"
       .sort({ fecha: 1, hora: 1 });
-
-    // Agregar un console.log para debugging
-    console.log("Turnos encontrados:", JSON.stringify(turnos[0], null, 2));
 
     if (!turnos.length) {
       return res.status(200).json({

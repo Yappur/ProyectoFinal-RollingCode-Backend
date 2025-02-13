@@ -43,8 +43,6 @@ const obtenerTodosLosUsuarios = async (req = request, res = response) => {
 const obtenerUnUsuario = async (req = request, res = response) => {
   const { idUsuario } = req.params;
 
-  console.log("ID recibido:", idUsuario); // Verificar el ID que llega
-
   try {
     if (!mongoose.Types.ObjectId.isValid(idUsuario)) {
       console.error("ID no válido:", idUsuario); // Mostrar el ID inválido en la consola
@@ -71,14 +69,11 @@ const crearUsuario = async (req = request, res = response) => {
   const { nombreUsuario, emailUsuario, contrasenia, role } = req.body;
 
   try {
-    // Verificar la longitud de la contraseña
     if (!contrasenia || contrasenia.length < 8) {
       return res.status(400).json({
         msg: "La contraseña debe tener al menos 8 caracteres",
       });
     }
-
-    // Verificar si el correo ya existe
     const existeEmail = await Usuario.findOne({ emailUsuario });
     if (existeEmail) {
       return res.status(400).json({
@@ -86,18 +81,15 @@ const crearUsuario = async (req = request, res = response) => {
       });
     }
 
-    // Crear un nuevo usuario con los datos proporcionados
     const usuario = new Usuario({
       nombreUsuario,
       emailUsuario,
-      contrasenia, // La contraseña sin encriptar, el middleware se encargará de encriptarla
+      contrasenia,
       role,
     });
 
-    // Guardar el usuario en la base de datos
     await usuario.save();
 
-    // No devolver la contraseña en la respuesta
     const usuarioSinContrasenia = usuario.toObject();
     delete usuarioSinContrasenia.contrasenia;
 
@@ -106,7 +98,6 @@ const crearUsuario = async (req = request, res = response) => {
       usuario: usuarioSinContrasenia,
     });
   } catch (error) {
-    console.log("Error completo:", error);
     return res.status(500).json({
       msg: "Error interno del servidor",
       error: error.message,
@@ -173,10 +164,9 @@ const actualizarUnUsuario = async (req = request, res = response) => {
 
 // borrar un usuario
 const borradoFisicoUsuario = async (req = request, res = response) => {
-  const { id } = req.params; // Cambiado de idUsuario a id para coincidir con el frontend
+  const { id } = req.params;
 
   try {
-    // Verificar si el usuario existe antes de intentar borrarlo
     const usuario = await Usuario.findById(id);
 
     if (!usuario) {
@@ -185,7 +175,6 @@ const borradoFisicoUsuario = async (req = request, res = response) => {
       });
     }
 
-    // Realizar el borrado
     await Usuario.findByIdAndDelete(id);
 
     res.status(200).json({
@@ -201,15 +190,13 @@ const borradoFisicoUsuario = async (req = request, res = response) => {
 };
 
 const cambiarRolUsuario = async (req = request, res = response) => {
-  const { id } = req.params; // Cambiado de idUsuario a id
+  const { id } = req.params;
 
   try {
     const usuario = await Usuario.findById(id);
     if (!usuario) {
       return res.status(404).json({ mensaje: "Usuario no encontrado" });
     }
-
-    console.log("Usuario encontrado:", usuario); // Depuración
 
     const nuevoRol = usuario.role === "user" ? "admin" : "user";
 
@@ -266,24 +253,15 @@ const toggleBloqueoUsuario = async (req = request, res = response) => {
 };
 
 const inicioDeSesionUsuario = async (req, res) => {
-  console.log("Datos recibidos en login:", req.body);
   const { emailUsuario, contrasenia } = req.body;
 
   try {
     const usuario = await Usuario.findOne({ emailUsuario });
-    console.log("Usuario encontrado:", usuario);
-
     if (!usuario) {
       return res.status(400).json({ msg: "Email no encontrado" });
     }
 
-    // Imprimir datos para debug (quitar en producción)
-    console.log("Contraseña recibida:", contrasenia);
-    console.log("Contraseña almacenada:", usuario.contrasenia);
-
     const esValida = await bcrypt.compare(contrasenia, usuario.contrasenia);
-    console.log("¿Contraseña válida?:", esValida);
-
     if (!esValida) {
       return res.status(401).json({ msg: "Credenciales incorrectas" });
     }

@@ -14,9 +14,7 @@ const verificarToken = (req, res, next) => {
   }
 
   try {
-    console.log("JWT_SECRET:", process.env.JWT_SECRET); // Verificar que JWT_SECRET está cargado
-    const verificado = jwt.verify(token, process.env.JWT_SECRET); // Validar el token
-    console.log("Token verificado:", verificado);
+    const verificado = jwt.verify(token, process.env.JWT_SECRET);
     req.usuario = verificado; // Añadir los datos del usuario al request
     next(); // Continuar al siguiente middleware o ruta
   } catch (error) {

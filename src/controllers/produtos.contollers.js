@@ -27,7 +27,6 @@ const obtenerClase = async (req = request, res = response) => {
 
 const crearClase = async (req = request, res = response) => {
   try {
-    // Verificar que todos los campos requeridos estén presentes
     const { nombreClase, categoria, descripcion, img } = req.body;
 
     if (!nombreClase || !categoria || !descripcion) {
@@ -37,7 +36,6 @@ const crearClase = async (req = request, res = response) => {
       });
     }
 
-    // Verificar si ya existe una clase con el mismo nombre
     const claseDB = await Clase.findOne({ nombreClase });
     if (claseDB) {
       return res.status(400).json({
@@ -45,7 +43,6 @@ const crearClase = async (req = request, res = response) => {
       });
     }
 
-    // Preparar los datos para guardar en la base de datos
     const data = {
       nombreClase,
       categoria,
@@ -65,7 +62,7 @@ const crearClase = async (req = request, res = response) => {
     res.status(400).json({
       msg: "Error al guardar la clase",
       error: error.message,
-      detalles: error.errors, // Esto mostrará errores de validación de Mongoose
+      detalles: error.errors,
     });
   }
 };
@@ -84,10 +81,6 @@ const actualizarClase = async (req = request, res = response) => {
   if (req.body.nombreClase) {
     data.nombreClase = req.body.nombreClase;
   }
-
-  // if (req.body.stock) {
-  //   data.stock = req.body.stock;
-  // }
   if (req.body.img) {
     data.img = req.body.img;
   }
@@ -125,8 +118,6 @@ const borradoFisicoDeLaClase = async (req = request, res = response) => {
 
 const pagarClase = async (body) => {
   try {
-    console.log("Iniciando configuración de Mercado Pago...");
-    console.log("Access Token:", process.env.MP_ACCESS_TOKEN);
 
     const cliente = new MercadoPagoConfig({
       access_token: process.env.MP_ACCESS_TOKEN,
@@ -135,7 +126,6 @@ const pagarClase = async (body) => {
 
     const preference = new Preference(cliente);
 
-    console.log("Creando preferencia...");
     const result = await preference.create({
       items: [
         {
@@ -159,8 +149,6 @@ const pagarClase = async (body) => {
       },
       auto_return: "approved",
     });
-
-    console.log("Preferencia creada con éxito:", result);
 
     return {
       url: result.body.init_point,
