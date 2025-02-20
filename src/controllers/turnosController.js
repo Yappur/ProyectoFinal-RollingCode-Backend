@@ -14,9 +14,11 @@ const crearTurno = async (req, res) => {
       return res.status(404).json({ mensaje: "Clase no encontrada" });
     }
 
+    const fechaAjustada = new Date(`${fecha}T${hora}:00-03:00`);
+
     const nuevoTurno = new Turno({
       usuario: usuarioId,
-      fecha,
+      fecha: fechaAjustada,
       hora,
       clase,
     });
