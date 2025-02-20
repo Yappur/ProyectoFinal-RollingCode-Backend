@@ -14,9 +14,11 @@ const crearTurno = async (req, res) => {
       return res.status(404).json({ mensaje: "Clase no encontrada" });
     }
 
+    const fechaAjustada = new Date(`${fecha}T${hora}:00-03:00`);
+
     const nuevoTurno = new Turno({
       usuario: usuarioId,
-      fecha,
+      fecha: fechaAjustada,
       hora,
       clase,
     });
@@ -127,6 +129,9 @@ const actualizarTurno = async (req, res) => {
       }
     }
 
+    // Ajustar la fecha para evitar el desfase horario
+    const fechaAjustada = new Date(fecha);
+
     let query;
     if (isAdmin) {
       query = { _id: id };
@@ -138,7 +143,7 @@ const actualizarTurno = async (req, res) => {
     const turnoActualizado = await Turno.findOneAndUpdate(
       query,
       {
-        fecha,
+        fecha: fechaAjustada, // Usar la fecha ajustada
         hora,
         clase,
         usuario: turnoExistente.usuario, // Mantener el usuario original
