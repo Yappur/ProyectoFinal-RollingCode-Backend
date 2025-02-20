@@ -129,6 +129,9 @@ const actualizarTurno = async (req, res) => {
       }
     }
 
+    // Ajustar la fecha para evitar el desfase horario
+    const fechaAjustada = new Date(fecha);
+
     let query;
     if (isAdmin) {
       query = { _id: id };
@@ -140,7 +143,7 @@ const actualizarTurno = async (req, res) => {
     const turnoActualizado = await Turno.findOneAndUpdate(
       query,
       {
-        fecha,
+        fecha: fechaAjustada, // Usar la fecha ajustada
         hora,
         clase,
         usuario: turnoExistente.usuario, // Mantener el usuario original
